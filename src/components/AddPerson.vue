@@ -112,7 +112,8 @@ export default {
                 HZYXQ: '',//护照有效期
                 CSRQ: '',//出生日期
                 SFZ: '',//身份证
-                type: '1'//类型1成人 0儿童
+                type: '1',//类型1成人 0儿童
+                ID: ''
             },
             orderID : '',
             flightID: '',
@@ -226,6 +227,7 @@ export default {
                 this.pList[i].PSEX = this.utils.clearSpace(p[i].Sex)
                 this.pList[i].PHZYXQ = this.utils.clearSpace(p[i].HZYXQ)
                 this.pList[i].FlightID = 0
+                this.pList[i].ID = p[i].id
                 let myDate = this.utils.dateFormat('yyyy')
                 let age = 0
                 if(p[i].CSRQ.length > 1){
@@ -259,309 +261,64 @@ export default {
             }
             if(ischeck && !this.isSubmitIng){
                 let that = this
-                this.Indicator.open('提交中...');
+                this.Indicator.open('提交中...')
+                
+                let AirType = '单程'
+                const types = that.utils.getItem("type")
+                if(types == true || types == 'true'){
+                    AirType = '往返'
+                }
 
-                let param = new URLSearchParams();
-                param.append("Mobile", this.tel);
-                param.append("userID", this.userID);
-                this.utils.ajax({
+                const params = {
+                    params: {
+                        cid: this.userID,
+                        perids: '',
+                        airinfo: {
+                            type: AirType,
+                            flightinfo: {},
+                            persons: this.pList
+                        }
+                    }
+                }
+                
+                this.utils.http({
                     name: this,
-                    uri: 'AdminLunhuan',
-                    method: 'post',
-                    params: param,
-                    success: res=>{
-                        console.log(res)
-                        if(res.status === 200){
-                            that.cname = res.data
-                        }
+                    uri: '/passenger/getpersons',
+                    methods: 'post',
+                    params: {
+                        params: { id: this.userID}
                     },
-                    fail: function(){
-                        that.Indicator.close()
-                        that.utils.alert(that, '网络连接失败')
+                    success: res=>{
+                        if(res.status === 200 && res.data.status === 1){
+                            this.list[0].values = res.data.data
+                        }
                     }
-                }).then(a => {
-                    let OrderCode = randomNum(0, 9)
-                    let OrderPrice = (parseInt(that.utils.getItem('orderprice')) + parseInt(that.utils.getItem('ordertax'))) * that.pList.length
-                    let AirType = '单程'
-                    let mdd = that.utils.getItem("ecode")
-                    let types = that.utils.getItem("type")
-                    if(types == true || types == 'true'){
-                        AirType = '往返'
-                    }
-
-                    let params = new URLSearchParams();
-                    params.append("OrderCode", OrderCode);
-                    params.append("OrderPrice", that.amountPrice);
-                    params.append("OrderType", 2);
-                    params.append("OrderState", '处理中');
-                    params.append("FKState", 0);
-                    params.append("AirType", AirType);
-                    params.append("CLNAME", that.cname);
-                    params.append("userID", that.userID);
-                    params.append("LXR", that.username);
-                    params.append("Mobile", that.tel);
-                    params.append("pas", that.pass);
-                    params.append("LXDH", that.tel);                    
-                    params.append("Email", that.emall);
-                    if(that.userID){
-                        params.append("yidenglu", 'yidenglu');
-                    }else{
-                        params.append("yidenglu", 'weidenglu');
-                    }                    
-                    params.append("Contact", that.username);
-                    params.append("mdd", mdd);
-                    that.utils.ajax({
-                        name: that,
-                        uri: 'SendAdminServlet',
-                        method: 'post',
-                        params: params,
-                        success: res=>{
-                            console.log(res)  
-                            if(res.status === 200){
-                                that.orderID  = res.data
-                            }
-                        },
-                        fail: function(){
-                            that.Indicator.close()
-                            that.utils.alert(that, '网络连接失败')
-                        }
-                    }).then(function(){
-                        let tax = parseInt(that.utils.getItem('ordertax'))
-                        let flightPrice = OrderPrice-tax
-                        let companyCode = that.startInfo.CompanyCode
-                        let beizhu = that.startInfo.piaojia.beizhu
-                        let flightCode = that.startInfo.AirCode + ' '
-                        if(that.startInfo.otherFlight && that.startInfo.otherFlight.length > 0){
-                            for(let m in that.startInfo.otherFlight){
-                                flightCode += that.startInfo.otherFlight[m].AirCode + ' '
-                            }
-                        }
-                        if(AirType === '往返'){
-                            flightCode += that.backInfo.AirCode + ' '
-                            if(that.backInfo.otherFlight && that.backInfo.otherFlight.length > 0){
-                                for(let n in that.backInfo.otherFlight){
-                                    flightCode += that.backInfo.otherFlight[n].AirCode + ' '
-                                }
-                            }
-                        }
-
-                        that.utils.ajax({
-                            name: that,
-                            uri: 'AddFilghtServlet',
-                            method: 'get',
-                            params: {
-                                params: {
-                                    "FlightPrice": that.airPrice,
-                                    "Shuijin": that.airTax,
-                                    "CompanyName": companyCode,
-                                    "FlightCode": flightCode,
-                                    "FlightContent": beizhu,
-                                    "OrderID": that.orderID
-                                }
-                            },
-                            success: res=>{
-                                console.log(res)  
-                                if(res.status === 200){
-                                    let d = res.data.split("$")
-                                    that.flightID  = d[0]
-                                }                 
-                            },
-                            fail: function(){
-                                that.Indicator.close()
-                                that.utils.alert(that, '网络连接失败')
-                            }
-                        }).then(function(){
-                            let StartDate = []
-                            let cityCode1 = []
-                            let cityCode2 = []
-                            let cityCode3 = []
-                            let cityCode4 = []
-                            let cityCode5 = []
-                            let cityTime1 = []
-                            let cityTime2 = []
-                            let cityTime3 = []
-                            let cityTime4 = []
-                            let FlightCode1 = []
-                            let jixing = []
-                            StartDate.push(that.utils.getItem("stime"))
-                            cityCode1.push(that.startInfo.SPortName)
-                            cityCode2.push(that.startInfo.EPortName)
-                            cityTime1.push(that.startInfo.STime)
-                            cityTime2.push(that.startInfo.ETime)
-                            FlightCode1.push(that.startInfo.AirCode)
-                            jixing.push(that.startInfo.Jixing)
-
-                            let ofl = that.startInfo.otherFlight
-                            if(ofl.length){
-                                for(var i in ofl){
-                                    cityCode1.push(ofl[i].SPortName)
-                                    cityCode2.push(ofl[i].EPortName)
-                                    cityTime1.push(ofl[i].STime)
-                                    cityTime2.push(ofl[i].ETime)
-                                    FlightCode1.push(ofl[i].AirCode)
-                                    jixing.push(ofl[i].Jixing)
-                                    let _d = ofl[i].STime.split('+')
-                                    if(_d.length<2){
-                                        StartDate.push(that.utils.getItem("stime"))
-                                    }else{
-                                        let _ad = that.utils.getAfterNDate(that.utils.getItem("stime"), parseInt(_d[1]), 'd')
-                                        StartDate.push(that.utils.dateFormat(_ad, 'yyyy-MM-dd'))
-                                    }                                    
-                                }
-                            }
-                            if(AirType === '往返'){
-                                StartDate.push(that.utils.getItem("etime"))
-                                cityCode1.push(that.backInfo.SPortName)
-                                cityCode2.push(that.backInfo.EPortName)
-                                cityCode4.push(that.startInfo.SPortName)
-                                cityCode4.push(that.backInfo.SPortName)
-                                cityCode5.push(that.backInfo.SPortName)
-                                cityCode5.push(that.startInfo.SPortName)
-                                cityTime1.push(that.backInfo.STime)
-                                cityTime2.push(that.backInfo.ETime)
-                                cityTime4.push(that.utils.getItem("stime"))
-                                cityTime4.push(that.utils.getItem("etime"))
-                                FlightCode1.push(that.backInfo.AirCode)
-                                jixing.push(that.backInfo.Jixing)
-                                let bofl = that.backInfo.otherFlight
-                                if(bofl.length){
-                                    for(var i in bofl){
-                                        cityCode1.push(bofl[i].SPortName)
-                                        cityCode2.push(bofl[i].EPortName)
-                                        cityTime1.push(bofl[i].STime)
-                                        cityTime2.push(bofl[i].ETime)
-                                        FlightCode1.push(bofl[i].AirCode)
-                                        jixing.push(bofl[i].Jixing)
-                                        let _d = bofl[i].STime.split('+')
-                                        if(_d.length<2){
-                                            StartDate.push(that.utils.getItem("etime"))
-                                        }else{
-                                            let _ad = that.utils.getAfterNDate(that.utils.getItem("etime"), parseInt(_d[1]), 'd')
-                                            StartDate.push(that.utils.dateFormat(_ad, 'yyyy-MM-dd'))
-                                        }                                    
-                                    }
-                                }
-                            }else{
-                                cityCode3.push(that.startInfo.SPortName)
-                                cityCode3.push(that.startInfo.EPortName)
-                                cityTime3.push(that.utils.getItem("stime"))
-                            }
-
-                            let parameters = new URLSearchParams()
-                            parameters.append("FlightID", that.flightID);
-                            parameters.append("StartDate", JSON.stringify(StartDate))
-                            parameters.append("cityCode1", JSON.stringify(cityCode1))
-                            parameters.append("cityTime1", JSON.stringify(cityTime1))
-                            parameters.append("cityCode2", JSON.stringify(cityCode2))
-                            parameters.append("cityCode3", JSON.stringify(cityCode3))
-                            parameters.append("cityCode4", JSON.stringify(cityCode4))
-                            parameters.append("cityCode5", JSON.stringify(cityCode5))
-                            parameters.append("cityTime2", JSON.stringify(cityTime2))
-                            parameters.append("cityTime3", JSON.stringify(cityTime3))
-                            parameters.append("cityTime4", JSON.stringify(cityTime4))
-                            parameters.append("FlightCode1", JSON.stringify(FlightCode1))
-                            parameters.append("jixing", JSON.stringify(jixing))
-                            parameters.append("chengjiren", JSON.stringify(that.pList))
-                            parameters.append("lineType", AirType)
-                            that.utils.ajax({
-                                name: that,
-                                uri: 'AddFilghtServlet',
-                                method: 'post',
-                                params: parameters,
-                                success: res=>{
-                                    console.log(res)  
-                                    if(res.status === 200){
-                                        
-                                    }                 
-                                    that.Indicator.close()
-                                },
-                                fail: function(){
-                                    that.Indicator.close()
-                                    that.utils.alert(that, '网络连接失败')
-                                }
-                            }).then(function(){
-                                let pm = new URLSearchParams()
-                                if(that.userID){
-                                    pm.append("yidenglu", 'yidenglu');
-                                }else{
-                                    pm.append("yidenglu", 'weidenglu');
-                                }
-                                pm.append("userID", that.userID);
-                                pm.append("Contact", "");
-                                pm.append("Email", "");
-                                pm.append("Mobile", "");
-                                pm.append("pas", "");
-                                pm.append("OrderID", that.orderID);
-                                pm.append("XCContent", '');
-                                pm.append("chengjiren", JSON.stringify(that.pList));
-                                that.utils.ajax({
-                                    name: that,
-                                    uri: 'AdddetailServlet',
-                                    method: 'post',
-                                    params: pm,
-                                    success: res=>{
-                                        console.log(res)  
-                                        if(res.status === 200){
-                                            that.utils.alert(that, '订单提交成功!').then(action => {
-                                                that.$router.push({ path: '/my' })
-                                            })
-                                        }                 
-                                        that.Indicator.close()
-                                    },
-                                    fail: function(){
-                                        that.Indicator.close()
-                                        that.utils.alert(that, '网络连接失败')
-                                    }
-                                })
-                            })
-                        })
-                    })
                 })
             }
         }
     },
     created () {
+        const _account = this.utils.getAccount(this)
+        this.userID = _account.id || ''
+        console.log(this.userID)
+
         this.PersonList.push(JSON.parse(JSON.stringify(this.person)))   
         this.airPrice = parseInt(this.utils.getItem('orderprice'))   
         this.airTax = parseInt(this.utils.getItem('ordertax'))
         this.amountPrice = this.airPrice + this.airTax
-        this.userID = this.utils.getItem("kxUserID")
         this.startInfo = JSON.parse(this.utils.getItem("startInfo"))
         this.backInfo = JSON.parse(this.utils.getItem("backInfo"))
-        console.log(this.startInfo)
-        console.log(this.backInfo)
 
         if(this.userID){
-            let param = new URLSearchParams();
-            param.append("userID", this.userID);
-            let that = this
-            this.utils.ajax({
+            this.utils.http({
                 name: this,
-                uri: 'SendUserInfoServlet',
-                method: 'post',
-                params: param,
+                uri: '/passenger/getpersons',
+                params: {
+                    params: { id: this.userID}
+                },
                 success: res=>{
-                    if(res.status === 200){
-                        console.log(res)
-                        that.tel = res.data.Mobile
-                        that.username = res.data.UserName
-                        that.email = res.data.emall
-                        that.pass = res.data.Password
-                        this.utils.ajax({
-                            name: this,
-                            uri: 'SendUserInfoServlet',
-                            params: {
-                                params: {
-                                    Mobile: that.tel
-                                }
-                            },
-                            success: regs=>{
-                                if(regs.status === 200){
-                                    console.log(regs)
-                                    that.list[0].values = regs.data
-                                }
-                            }
-                        })
+                    if(res.status === 200 && res.data.status === 1){
+                        this.list[0].values = res.data.data
                     }
                 }
             })

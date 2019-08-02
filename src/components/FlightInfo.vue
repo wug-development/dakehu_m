@@ -155,7 +155,9 @@ export default {
         }
     },
     created: function() {
-        this.userID = this.utils.getItem("kxUserID") || ''
+        const _account = this.utils.getAccount(this)
+        this.userID = _account.id || ''
+
         let startList = JSON.parse(this.utils.getItem("startFlight"))
         let backList = JSON.parse(this.utils.getItem("backFlight"))
         this.startDate = this.utils.getItem("stime")

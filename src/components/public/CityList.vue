@@ -12,7 +12,7 @@
             <div class="citylist-group-item" v-for="(c, index) in dataList" :key="index">
                 <div class="citylist-group-item-label">{{c.index}}</div>
                 <ul class="citylist-group-item-list">
-                    <li class="citylist-group-item-list-item" v-for="(item, i) in c.items" :key="i" @click="chooseCity(item)">{{item.city}}-{{item.Portname}}</li>
+                    <li class="citylist-group-item-list-item" v-for="(item, i) in c.items" :key="i" @click="chooseCity(item)">{{item.name}}-{{item.airportname}}</li>
                 </ul>
             </div>
         </div>
@@ -66,7 +66,7 @@ function getCityList(list, v){
     list = JSON.parse(list)
     return list.filter(function(i){
         i.items = i.items.filter(function(e){
-            return e.Pinyin.includes(v.toLocaleUpperCase()) || e.Display.includes(v.toLocaleUpperCase()) || e.city.includes(v.toLocaleUpperCase()) || e.Portname.includes(v.toLocaleUpperCase()) || e.en.includes(v.toLocaleUpperCase())
+            return e.pinyin.includes(v.toLocaleUpperCase()) || e.code.includes(v.toLocaleUpperCase()) || e.name.includes(v.toLocaleUpperCase()) || e.airportname.includes(v.toLocaleUpperCase()) || e.enname.includes(v.toLocaleUpperCase())
         })
         return i.items.length>0
     })

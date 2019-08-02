@@ -1,10 +1,17 @@
 module.exports = {
     proxy: {
         '/apis': {
-            target: 'http://m.airkx.com/mwork/',
+            target: 'http://localhost:63844/api/',
             changeOrigin: true,
             pathRewrite: {
                 '^/apis': ''
+            }
+        },
+        '/apio': {
+            target: 'http://m.airkx.com/mwork/',
+            changeOrigin: true,
+            pathRewrite: {
+                '^/apio': ''
             }
         },
         '/apiw': {

@@ -99,7 +99,7 @@ var utils = {
     /*
     * http 请求数据
     * */
-    ajax : function (options) {
+    ajax : function (options, origin) {
         var defualt = {
             name: options.name || 'Vue',
             method: options.method || 'get',
@@ -107,19 +107,23 @@ var utils = {
             params: options.params || {},
             success: options.success || function (){},
             fail: options.fail || function (){},
-            compvare: options.compvare || function (){}
+            compvare: options.compvare || function (){},
+            origin: options.origin
         }
         if(defualt.method === 'get'){
-            return defualt.name.$http.get(defualt.name.uri + defualt.uri, defualt.params)
+            return defualt.name.$http.get((origin || defualt.name.urio) + defualt.uri, defualt.params)
               .then(defualt.success)
               .catch(defualt.fail)
             //.compvare(defualt.compvare);
         } else {
-            return defualt.name.$http.post(defualt.name.uri + defualt.uri, defualt.params)
+            return defualt.name.$http.post((origin || defualt.name.urio) + defualt.uri, defualt.params)
               .then(defualt.success)
               .catch(defualt.fail)
             //.compvare(defualt.compvare);
         }
+    },
+    http(options){
+        return this.ajax(options, options.name.uris)
     },
     alert(vue, content, title){
         return vue.MessageBox(title || '温馨提示', content)
@@ -147,6 +151,19 @@ var utils = {
     },
     clearSpace(v){
         return v.replace(/ /g,'')
+    },
+    getAccount(vue){
+        const _account = sessionStorage.getItem('account')
+        if (!_account) {
+            vue.MessageBox.alert('请登录').then(() => {
+                vue.$router.push({
+                    path: '/'
+                })
+            })
+            return {}
+        } else {
+            return JSON.parse(_account)
+        }
     }
 };
 export default {

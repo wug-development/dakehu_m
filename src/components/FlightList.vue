@@ -376,119 +376,119 @@ function getFightList(vue, param){
         params: param,
         name: vue,
         success: res => {
-        console.log(res)
-        vue.Indicator.close()
-        if(res.status === 200 && res.data.hangxian.length > 0){
-            let data = res.data
-            let slist = []; //去程列表
-            let elist = []; //返程列表
-            let clist = []; //航空公司列表
-            let alist = []; //机型列表
-            let month = parseInt(vue.startDate.split('-')[1])
-            let len = data.hangxian.length
-            //单程
-            for(let i=0, j=0; i<len; i++){
-            let item = data.hangxian[i]
-            if(item.length>0){
-                let sm = vue.startDate.split('-')[1]
-                let piaojia = getPiaojia(data.piaojia[i], parseInt(sm))
-                if(piaojia){
-                clist.push(item[0].CompanyCode)
-                for(let m=0; m<item.length; m++){
-                    item[m].otherFlight = data.zhuanji[i][m]
-                    item[m].piaojia = piaojia
-                    item[m].jipiao = data.jipiao[i]
-                    item[m].index = j
-                    alist.push(item[m].Jixing)
-                }
-                j++
-                slist.push(item)
-                }
-            }
-            }
-
-            //返程
-            if(vue.flightType === '往返'){
-            for(let i=0; i<len; i++){
-                let item = data.hangxianS[i]
-                if(item.length>0){                  
-                let em = vue.endDate.split('-')[1]
-                let dnum = DateDiff(vue.startDate, vue.endDate)
-                let piaojia = getPiaojia(data.piaojia[i], em, dnum)
-                if(piaojia){
-                    clist.push(item[0].CompanyCode)
-                    for(let m=0; m<item.length; m++){
-                    item[m].otherFlight = data.zhuanjiS[i][m]
-                    item[m].piaojia = piaojia
-                    item[m].jipiao = data.jipiao[i]
-                    alist.push(item[m].Jixing)
-                    }
-                    elist.push(item)
-                }
-                }
-            }
-            }
-
-            vue.utils.ajax({
-            uri: 'FindAirComJixingServlet',
-            params: {
-                params: {
-                aircom: JSON.stringify(clist),
-                jixing: JSON.stringify(alist)
-                }
-            },
-            name: vue,
-            success: regs => {
-                if(regs.status === 200 && regs.data.airInfo.length > 0){
-                len = slist.length
-                for(let i=0; i<len; i++){
-                    let sitem = slist[i]
-                    for(let m=0; m<sitem.length; m++){
-                    sitem[m].airinfo = regs.data.aircomInfo[i]
-                    }
-                    if(vue.flightType === '往返'){
-                    let eitem = elist[i]
-                    for(let n=0; n<eitem.length; n++){
-                        eitem[n].airinfo = regs.data.aircomInfo[len+i]
-                    }
+            console.log(res)
+            vue.Indicator.close()
+            if(res.status === 200 && res.data.hangxian.length > 0){
+                let data = res.data
+                let slist = []; //去程列表
+                let elist = []; //返程列表
+                let clist = []; //航空公司列表
+                let alist = []; //机型列表
+                let month = parseInt(vue.startDate.split('-')[1])
+                let len = data.hangxian.length
+                //单程
+                for(let i=0, j=0; i<len; i++){
+                    let item = data.hangxian[i]
+                    if(item.length>0){
+                        let sm = vue.startDate.split('-')[1]
+                        let piaojia = getPiaojia(data.piaojia[i], parseInt(sm))
+                        if(piaojia){
+                            clist.push(item[0].CompanyCode)
+                            for(let m=0; m<item.length; m++){
+                                item[m].otherFlight = data.zhuanji[i][m]
+                                item[m].piaojia = piaojia
+                                item[m].jipiao = data.jipiao[i]
+                                item[m].index = j
+                                alist.push(item[m].Jixing)
+                            }
+                            j++
+                            slist.push(item)
+                        }
                     }
                 }
 
-                let m = 0;
-                for(let i=0; i<slist.length; i++){
-                    for(let j in slist[i]){
-                    slist[i][j].airtype = regs.data.airInfo[m++]
-                    }
-                }
-                vue.startList = compare(slist)
+                //返程
                 if(vue.flightType === '往返'){
-                    for(let i=0; i<elist.length; i++){
-                    for(let j in elist[i]){
-                        elist[i][j].airtype = regs.data.airInfo[m++]
+                    for(let i=0; i<len; i++){
+                        let item = data.hangxianS[i]
+                        if(item.length>0){                  
+                            let em = vue.endDate.split('-')[1]
+                            let dnum = DateDiff(vue.startDate, vue.endDate)
+                            let piaojia = getPiaojia(data.piaojia[i], em, dnum)
+                            if(piaojia){
+                                clist.push(item[0].CompanyCode)
+                                for(let m=0; m<item.length; m++){
+                                    item[m].otherFlight = data.zhuanjiS[i][m]
+                                    item[m].piaojia = piaojia
+                                    item[m].jipiao = data.jipiao[i]
+                                    alist.push(item[m].Jixing)
+                                }
+                                elist.push(item)
+                            }
+                        }
                     }
+                }
+
+                vue.utils.ajax({
+                    uri: 'FindAirComJixingServlet',
+                    params: {
+                        params: {
+                        aircom: JSON.stringify(clist),
+                        jixing: JSON.stringify(alist)
+                        }
+                    },
+                    name: vue,
+                    success: regs => {
+                        if(regs.status === 200 && regs.data.airInfo.length > 0){
+                        len = slist.length
+                        for(let i=0; i<len; i++){
+                            let sitem = slist[i]
+                            for(let m=0; m<sitem.length; m++){
+                            sitem[m].airinfo = regs.data.aircomInfo[i]
+                            }
+                            if(vue.flightType === '往返'){
+                            let eitem = elist[i]
+                            for(let n=0; n<eitem.length; n++){
+                                eitem[n].airinfo = regs.data.aircomInfo[len+i]
+                            }
+                            }
+                        }
+
+                        let m = 0;
+                        for(let i=0; i<slist.length; i++){
+                            for(let j in slist[i]){
+                            slist[i][j].airtype = regs.data.airInfo[m++]
+                            }
+                        }
+                        vue.startList = compare(slist)
+                        if(vue.flightType === '往返'){
+                            for(let i=0; i<elist.length; i++){
+                            for(let j in elist[i]){
+                                elist[i][j].airtype = regs.data.airInfo[m++]
+                            }
+                            }
+                            vue.backList = elist
+                        }
+                        }else{                  
+                        vue.isLoading = false
+                        vue.notFind = true
+                        }
+                    },
+                    fail: ()=>{
+                        vue.isLoading = false
+                        vue.notFind = true
                     }
-                    vue.backList = elist
-                }
-                }else{                  
-                vue.isLoading = false
-                vue.notFind = true
-                }
-            },
-            fail: ()=>{
+                })
+            }else{
                 vue.isLoading = false
                 vue.notFind = true
             }
-            })
-        }else{
-            vue.isLoading = false
-            vue.notFind = true
-        }
         },
         fail: ()=>{
-        vue.Indicator.close()
-        vue.isLoading = false
-        vue.notFind = true
-        vue.utils.alert(vue, '网络连接失败，请刷新重试')
+            vue.Indicator.close()
+            vue.isLoading = false
+            vue.notFind = true
+            vue.utils.alert(vue, '网络连接失败，请刷新重试')
         }
     })
 }

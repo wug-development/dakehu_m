@@ -16,13 +16,16 @@ import indicator from 'mint-ui/lib/indicator'
 import 'mint-ui/lib/indicator/style.css'
 import messagebox from 'mint-ui/lib/message-box'
 import 'mint-ui/lib/message-box/style.css'
+import datetimePicker from 'mint-ui/lib/datetime-picker'
+import 'mint-ui/lib/datetime-picker/style.css'
 
 import common from '../common/common'
 
 Vue.config.productionTip = false
 Vue.prototype.$http = Axios
-Vue.prototype.uri = process.env.API_URL
+Vue.prototype.uris = process.env.API_URL
 Vue.prototype.uriw = process.env.APIW_URL
+Vue.prototype.urio = process.env.APIO_URL
 Vue.prototype.utils = common.utils
 Vue.prototype.MessageBox = messagebox
 Vue.prototype.Indicator = indicator
@@ -30,6 +33,7 @@ Vue.prototype.Indicator = indicator
 Vue.component(radio.name, radio)
 Vue.component(swipe.name, swipe)
 Vue.component(swipeItem.name, swipeItem)
+Vue.component(datetimePicker.name, datetimePicker)
 
 /* eslint-disable no-new */
 new Vue({

@@ -26,9 +26,32 @@ export default {
     },
     methods: {
         login: function () {
-            this.$router.push({
-                path: '/index'
-            })
+            if (this.acount == '') {
+                this.MessageBox('请输入账号')
+            } else if (this.pass == '') {
+                this.MessageBox('请输入密码')
+            } else {
+                this.$http.get(this.uris + '/company/login', {
+                    params: {
+                        "uname": this.acount,
+                        "upass": this.pass
+                    }
+                }).then(res => {
+                    console.log(res)
+                    if (res.data.status == '1') {
+                        sessionStorage.setItem('account', JSON.stringify(res.data.data[0]))
+                        this.$router.push({
+                            path: '/index'
+                        })
+                    } else {
+                        this.MessageBox(res.msg)
+                    }
+                })
+                .catch((e)=> {
+                    console.log(e)
+                    this.MessageBox({title:'温馨提示',message:'登录失败，请检查网络！'})
+                })  
+            }
         }
     }
 }

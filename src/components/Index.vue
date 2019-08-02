@@ -28,10 +28,10 @@
                     </div>
                     <div class="date">
                         <div class="form-date go-date">
-                            <input type="text" readonly v-model="flightInfo.startTime" placeholder="出发日期">
+                            <input type="text" readonly v-model="flightInfo.startTime" @click="showStartDate" placeholder="出发日期">
                         </div>
                         <div class="form-date out-date" v-show="ticketType">
-                            <input type="text" readonly v-model="flightInfo.endTime" placeholder="返回日期">
+                            <input type="text" readonly v-model="flightInfo.endTime" @click="showEndDate" placeholder="返回日期">
                         </div>
                     </div>
                     <div class="btn" @click="findFlight">
@@ -50,11 +50,11 @@
                 <div class="tab-title">登录信息</div>
                 <div class="info-tab">
                     <div class="accpass account">
-                        <div>M妙奇艺</div>
+                        <div>{{accountInfo.username}}</div>
                         <span>公司简称</span>
                     </div>
                     <div class="accpass pass">
-                        <div>123456</div>
+                        <div>{{accountInfo.password}}</div>
                         <span>登录密码</span>
                     </div>
                 </div>
@@ -63,58 +63,22 @@
             <div class="linkmaninfo">
                 <div class="tab-title">联系人信息</div>
                 <ul class="linkman-box">
-                    <li>
+                    <li v-for="(item, i) in linkmans" :key="i">
                         <div class="linkman-infobox">
                             <div class="name">
-                                <span>王楠</span>
+                                <span>{{item.linkname}}</span>
                             </div>
                             <div class="phone">
-                                手机号<span>13810179999</span>
+                                手机号<span>{{item.phone}}</span>
                             </div>
-                            <div class="down-up" @click="linkman=1">
-                                展开
-                            </div>
-                        </div>
-                        <div class="other-info" v-show="linkman==1">
-                            <div><span>微信号</span>wuguang123456 </div>
-                            <div><span>QQ</span>555555555</div>
-                            <div><span>邮&nbsp;&nbsp;&nbsp;箱</span>wuguang407906079@163.com</div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="linkman-infobox">
-                            <div class="name">
-                                <span>王楠</span>
-                            </div>
-                            <div class="phone">
-                                手机号<span>13810179999</span>
-                            </div>
-                            <div class="down-up" @click="linkman=2">
-                                展开
+                            <div :class='"down-up" + (other.linkman===item.id? " cur" : "")' @click="openMoreInfo(item.id)">
+                                {{other.linkman===item.id? "关闭" : "展开"}}
                             </div>
                         </div>
-                        <div class="other-info" v-show="linkman==2">
-                            <div><span>微信号</span>wuguang123456 </div>
-                            <div><span>QQ</span>555555555</div>
-                            <div><span>邮&nbsp;&nbsp;&nbsp;箱</span>wuguang407906079@163.com</div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="linkman-infobox">
-                            <div class="name">
-                                <span>王楠</span>
-                            </div>
-                            <div class="phone">
-                                手机号<span>13810179999</span>
-                            </div>
-                            <div class="down-up" @click="linkman=3">
-                                展开
-                            </div>
-                        </div>
-                        <div class="other-info" v-show="linkman==3">
-                            <div><span>微信号</span>wuguang123456 </div>
-                            <div><span>QQ</span>555555555</div>
-                            <div><span>邮&nbsp;&nbsp;&nbsp;箱</span>wuguang407906079@163.com</div>
+                        <div class="other-info" v-show="other.linkman===item.id">
+                            <div><span>微信号</span>{{item.wechat}} </div>
+                            <div><span>QQ</span>{{item.qq}}</div>
+                            <div><span>邮&nbsp;&nbsp;&nbsp;箱</span>{{item.email}}</div>
                         </div>
                     </li>
                 </ul>
@@ -146,21 +110,18 @@
                 <div class="tab-title">分公司信息</div>
                 <div class="branchoffice-box">
                     <div class="tab">
-                        <span class="cur">M妙奇艺</span>
-                        <span>M妙奇艺 - 上海分公司</span>
-                        <span>M妙奇艺 - 北京分公司</span>
-                        <span>M妙奇艺 - 广州分公司</span>
+                        <span :class='other.subc === i?"cur":""' @click="other.subc = i" v-for="(item, i) in subCompanyLinkMans" :key="i">{{item.uname}}</span>
                     </div>
                     <ul class="tab-info">
-                        <li>
-                            <div class="title">M妙奇艺 - 上海分公司</div>
+                        <li v-for="(item, i) in subCompanyLinkMans" :key="i" v-show='other.subc === i'>
+                            <div class="title">{{item.uname}}</div>
                             <div class="tab-info-box">
-                                <div><span>登录密码</span>123456</div>
-                                <div><span>联系人</span>汪洋</div>
-                                <div><span>联系电话</span>12345678944</div>
-                                <div><span>邮箱</span>1024567894@qq.com</div>
-                                <div><span>QQ</span>2435467889</div>
-                                <div><span>微信号</span>12435467897457</div>
+                                <div><span>登录密码</span>{{item.upass}}</div>
+                                <div><span>联系人</span>{{item.linkname}}</div>
+                                <div><span>联系电话</span>{{item.phone}}</div>
+                                <div><span>邮箱</span>{{item.email}}</div>
+                                <div><span>QQ</span>{{item.qq}}</div>
+                                <div><span>微信号</span>{{item.wechat}}</div>
                             </div>
                         </li>
                     </ul>
@@ -174,7 +135,7 @@
         <CityList cityTitle="选择到达城市" :cityList="gjendCityList" :cityShow="visibleGJEndCity" v-on:close="visibleGJEndCity=false" v-on:chooseCity='selEndCity'></CityList>
         <CityList cityTitle="选择到达城市" :cityList="gnendCityList" :cityShow="visibleGNEndCity" v-on:close="visibleGNEndCity=false" v-on:chooseCity='selEndCity'></CityList>
         <DatePicker title="选择出发时间" :dateShow="startDateShow" :endDate="startEndTime" v-on:chooseDate="startConfirm" v-on:close="startCancel"></DatePicker>
-        <DatePicker title="选择到达时间" :dateShow="endDateShow" :startDate="startTime" :endDate="startEndTime" v-on:chooseDate="endConfirm" v-on:close="endCancel"></DatePicker>
+        <DatePicker title="选择到达时间" :dateShow="endDateShow" :startDate="flightInfo.startTime" :endDate="startEndTime" v-on:chooseDate="endConfirm" v-on:close="endCancel"></DatePicker>
     </div>
 </template>
 
@@ -190,7 +151,11 @@ export default {
         return {
             flightType: 1,
             ticketType: 1,
-            linkman: 0,
+            accountInfo: {
+                id: '',
+                username: '',
+                password: ''
+            },
             flightInfo: {
                 startCity: '',
                 startCityValue: '',
@@ -212,7 +177,13 @@ export default {
             visibleGJEndCity: false,
             visibleGNEndCity: false,
             startEndTime: '',
-            startTime: ''
+            startTime: '',
+            linkmans: [],
+            subCompanyLinkMans: [],
+            other: {
+                linkman: '',
+                subc: 0
+            }
         }
     },
     methods: {
@@ -242,32 +213,33 @@ export default {
             }
         },
         selStartCity: function(val){
-            this.flightInfo.startCity = val.city
-            this.flightInfo.startCityValue = val.Portname
-            this.flightInfo.startCityShort = val.Display
-            this.flightInfo.startCityText = val.Portname + '(' + val.Display + ')'
+            this.flightInfo.startCity = val.name
+            this.flightInfo.startCityValue = val.airportname
+            this.flightInfo.startCityShort = val.code
+            this.flightInfo.startCityText = val.airportname + '(' + val.code + ')'
             this.visibleStartCity = false
         },
         selEndCity: function(val){
-            this.flightInfo.endCity = val.city
-            this.flightInfo.endCityValue = val.Portname
-            this.flightInfo.endCityShort = val.Display
-            this.flightInfo.endCityText = val.Portname + '(' + val.Display + ')'
-            this.visibleEndCity = false
+            this.flightInfo.endCity = val.name
+            this.flightInfo.endCityValue = val.airportname
+            this.flightInfo.endCityShort = val.code
+            this.flightInfo.endCityText = val.airportname + '(' + val.code + ')'
+            this.visibleGJEndCity = false
+            this.visibleGNEndCity = false
         },
         startConfirm: function(val){
-            this.startTime = this.utils.dateFormat(val, "yyyy-MM-dd")
+            this.flightInfo.startTime = this.utils.dateFormat(val, "yyyy-MM-dd")
             this.endStartTime = this.utils.getAfterNDate(val, 1, 'd')
             this.startDateShow = false
-            if(this.endTime && this.utils.dateTab(this.startTime, this.endTime)){
-                this.endTime = ''
+            if(this.flightInfo.endTime && this.utils.dateTab(this.flightInfo.startTime, this.flightInfo.endTime)){
+                this.flightInfo.endTime = ''
             }
         },
         startCancel: function(){
             this.startDateShow = false
         },
         endConfirm: function(val){
-            this.endTime = this.utils.dateFormat(val, "yyyy-MM-dd")
+            this.flightInfo.endTime = this.utils.dateFormat(val, "yyyy-MM-dd")
             this.startEndTime = this.utils.getAfterNDate(val, -1, 'd')
             this.endDateShow = false
         },
@@ -304,6 +276,25 @@ export default {
             } else {
                 this.flightInfo.endCityText = '上海虹桥机场' + '(SHA)'
             }
+        },
+        showStartDate(){
+            this.startEndTime = this.utils.dateFormat(this.utils.getAfterNDate((new Date()), 1, 'y'), 'yyyy-MM-dd')
+            this.startDateShow = true
+        },
+        showEndDate(){
+            if(this.flightInfo.startTime == '' || this.flightInfo.startTime == '出发时间'){
+                this.utils.alert(this, '请先选择出发时间')
+            }else{          
+                this.startEndTime = this.utils.dateFormat(this.utils.getAfterNDate(this.flightInfo.startTime, 1, 'y'), 'yyyy-MM-dd')
+                this.endDateShow = true
+            }
+        },
+        openMoreInfo (i) {
+            if (this.other.linkman == i) {
+                this.other.linkman = ''
+            } else {
+                this.other.linkman = i
+            }
         }
     },
     components: {
@@ -313,6 +304,20 @@ export default {
         DatePicker
     },
     created() {
+        const _account = sessionStorage.getItem('account')
+        if (!_account) {
+            this.MessageBox.alert('请登录').then(() => {
+                this.$router.push({
+                    path: '/'
+                })
+            })
+        } else {
+            let _user = JSON.parse(_account)
+            this.accountInfo.username = _user.uname
+            this.accountInfo.password = _user.upass
+            this.accountInfo.id = _user.id
+        }
+
         let scode = this.utils.getItem("scode") || 'PEK'
         let ecode = this.utils.getItem("ecode") || 'LAX'
         let stime = this.utils.getItem("stime") || this.utils.dateFormat(this.utils.getAfterNDate(1,'d'),'yyyy-MM-dd')
@@ -337,28 +342,55 @@ export default {
         this.flightInfo.endTime = etime
 
         this.userID = this.utils.getItem("kxUserID") || ''
-        getCityList(this)     
+        // 获取城市列表
+        getCityList(this)
+
+        // 获取联系人
+        getLinkMans(this)
+
+        // 获取子公司和联系人
+        getSubCompanyLinkman(this)
     }
 }
+
+
+// 获取联系人
+function getLinkMans (vue) {
+    vue.utils.http({
+        name: vue,
+        uri: '/company/getlinkman',
+        params: {params:{id: vue.accountInfo.id}},
+        success: res=>{
+            if(res.data.status === 1){
+                vue.linkmans = res.data.data
+            }
+        }
+    })
+}
+
+// 获取子公司和联系人
+function getSubCompanyLinkman (vue) {
+    vue.utils.http({
+        name: vue,
+        uri: '/company/getsubcompanylinkman',
+        params: {params:{id: vue.accountInfo.id}},
+        success: res=>{
+            if(res.data.status === 1){
+                vue.subCompanyLinkMans = res.data.data
+            }
+        }
+    })
+}
+
 //获取城市列表
 function getCityList(vue){
-    vue.utils.ajax({
+    vue.utils.http({
         name: vue,
-        uri: 'CityinternationalServlet',
+        uri: '/city/getallcity',
         success: res=>{
-            if(res.status === 200){
-                let scity = [], ecity = [];
-                for(let i in res.data){
-                    if(res.data[i].Pinyin.trim().length>0){
-                        if(res.data[i].type === "2"){
-                            scity.push(res.data[i])
-                        }else{
-                            ecity.push(res.data[i])
-                        }
-                    }
-                }
-                getStartCityList(vue, scity)
-                getEndCityList(vue, ecity)
+            if(res.data.status === 1){
+                getStartCityList(vue, res.data.data.ds)
+                getEndCityList(vue, res.data.data.ds1)
             }
         }
     })
@@ -366,10 +398,13 @@ function getCityList(vue){
 //获取出发城市
 function getStartCityList(vue, data){
     let sCity = data.sort(function(x,y){
-        return x.Pinyin.trim()>y.Pinyin.trim()?1:-1
+        return x.pinyin.trim()>y.pinyin.trim()?1:-1
     })
-    let sArr = [];
-    let m = 0;
+    let sArr = [{
+        index: '*',
+        items: []
+    }]
+    let m = 1;
     for(let i = 65; i < 91; i++ ){
         sArr.push({
             index : String.fromCharCode(i),
@@ -377,11 +412,18 @@ function getStartCityList(vue, data){
         })
     }
     for(let c in sCity){
-        let g = sCity[c].Pinyin.trim().substr(0,1).toLocaleUpperCase()
-        if(c != 0 && g != sArr[m].index && m<25){
+        let g = sCity[c].pinyin.trim().substr(0,1).toLocaleUpperCase()
+        if (sCity[c].hot == 1) {
+            sArr[0].items.push(sCity[c])
+        } else if(c != 0 && g != sArr[m].index && m<25){
             m++
         }
-        sArr[m].items.push(sCity[c])
+        if (sCity[c].hot != 1) {
+            sArr[m].items.push(sCity[c])
+        }
+    }
+    if (sArr[0].items.length < 1) {
+        sArr.shift(0,1)
     }
     vue.startCityList = sArr
     vue.gnendCityList = sArr
@@ -389,10 +431,13 @@ function getStartCityList(vue, data){
 //获取到达城市
 function getEndCityList(vue, data){
     let eCity = data.sort(function(x,y){
-        return x.Pinyin.trim()>y.Pinyin.trim()?1:-1
+        return x.pinyin.trim()>y.pinyin.trim()?1:-1
     })
-    let eArr = [];
-    let m = 0;
+    let eArr = [{
+        index: '*',
+        items: []
+    }]
+    let m = 1
     for(let i = 65; i < 91; i++ ){
         eArr.push({
             index : String.fromCharCode(i),
@@ -401,11 +446,18 @@ function getEndCityList(vue, data){
     }
     let len = eCity.length
     for(let a=0; a < len; a++){
-        let g = eCity[a].Pinyin.trim().substr(0,1).toLocaleUpperCase()
-        if(a && g != eArr[m].index && m<25){
+        let g = eCity[a].pinyin.trim().substr(0,1).toLocaleUpperCase()
+        if (eCity[a].hot == 1) {
+            eArr[0].items.push(eCity[a])
+        } else if(a && g != eArr[m].index && m<25){
             m++;
         }
-        eArr[m].items.push(eCity[a])
+        if (eCity[a].hot != 1) {
+            eArr[m].items.push(eCity[a])
+        }
+    }
+    if (eArr[0].items.length < 1) {
+        eArr.shift(0,1)
     }
     vue.gjendCityList = eArr
 }
