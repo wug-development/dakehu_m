@@ -354,7 +354,7 @@ export default {
             params: {
                 'scode': scode,
                 'ecode': ecode,
-                'type': this.flightType
+                'type': ttype
             }
         }
         this.isLoading = true
@@ -371,15 +371,15 @@ export default {
 //获取航班线路
 function getFightList(vue, param){
     vue.Indicator.open()
-    vue.utils.ajax({
-        uri: 'SelectPriceServlet',
+    vue.utils.http({
+        uri: '/flight/getflightlist',
         params: param,
         name: vue,
         success: res => {
             console.log(res)
             vue.Indicator.close()
-            if(res.status === 200 && res.data.hangxian.length > 0){
-                let data = res.data
+            if(res.data.status === 1 && res.data.data.hangxian.length > 0){
+                let data = res.data.data
                 let slist = []; //去程列表
                 let elist = []; //返程列表
                 let clist = []; //航空公司列表

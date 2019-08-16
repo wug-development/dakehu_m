@@ -215,82 +215,66 @@ export default {
             countAmount(this)
         },
         submit () {
-            let p = this.PersonList            
-            let ischeck = true
-
-            for(let i in p){
-                this.pList[i] = {}
-                this.pList[i].PName = this.utils.clearSpace(p[i].CjrName)
-                this.pList[i].PCode = ""
-                this.pList[i].PHZ = this.utils.clearSpace(p[i].HZH)
-                this.pList[i].PBD = this.utils.clearSpace(p[i].CSRQ)
-                this.pList[i].PSEX = this.utils.clearSpace(p[i].Sex)
-                this.pList[i].PHZYXQ = this.utils.clearSpace(p[i].HZYXQ)
-                this.pList[i].FlightID = 0
-                this.pList[i].ID = p[i].id
-                let myDate = this.utils.dateFormat('yyyy')
-                let age = 0
-                if(p[i].CSRQ.length > 1){
-                    age = parseInt(myDate) - parseInt(p[i].CSRQ.substr(0,4))
-                }
-                if(p[i].CjrName.length < 1 || p[i].CjrName.length > 20 || !this.utils.englishName(p[i].CjrName)){
-                    this.utils.alert(this, '第' + (parseInt(i)+1) + '位乘机人姓名必须是拼音或英文')
-                    ischeck = false
-                    break
-                }else if(p[i].HZH.length < 1){
-                    this.utils.alert(this, '请输入第' + (parseInt(i)+1) + '位乘机人的护照号码')
-                    ischeck = false
-                    break
-                }else if(p[i].HZH.length > 50 || this.utils.isEn(p[i].HZH) || !this.utils.isNumberEn(p[i].HZH)){
-                    this.utils.alert(this, '第' + (parseInt(i)+1) + '位乘机人护照号码格式不正确')
-                    ischeck = false
-                    break
-                }else if(p[i].CSRQ.length < 1){
-                    this.utils.alert(this, '请选择第' + (parseInt(i)+1) + '位乘机人的出生日期')
-                    ischeck = false
-                    break
-                }else if(p[i].type == '0' && age > 12){
-                    this.utils.alert(this, '第' + (parseInt(i)+1) + '位乘机人年龄超出，请重新选择出生日期')
-                    ischeck = false
-                    break
-                }else if(p[i].Sex.length < 1){
-                    this.utils.alert(this, '请选择第' + (parseInt(i)+1) + '位乘机人的性别')
-                    ischeck = false
-                    break
-                }
-            }
+            let ischeck = checkVal(this)
+            
             if(ischeck && !this.isSubmitIng){
                 let that = this
-                this.Indicator.open('提交中...')
+                // this.Indicator.open('提交中...')
                 
                 let AirType = '单程'
-                const types = that.utils.getItem("type")
-                if(types == true || types == 'true'){
+                const types = this.utils.getItem("ttype")
+
+                let startDate = this.utils.getItem("stime")
+                let startCity = this.utils.getItem("scity")
+                let endDate = ''
+                let endCity = ''
+                let toIDS = []
+                let toBackIDS = []
+                for (let i in this.startInfo.otherFlight) {
+                    toIDS.push(this.startInfo.otherFlight[i].SubAirID)
+                }
+                if(types == 1 || types == '1'){
                     AirType = '往返'
+                    endDate = this.utils.getItem("etime")
+                    endCity = this.utils.getItem("ecity")
+                    for (let i in this.backInfo.otherFlight) {
+                        toBackIDS.push(this.backInfo.otherFlight[i].SubAirID)
+                    }
                 }
 
                 const params = {
-                    params: {
-                        cid: this.userID,
-                        perids: '',
-                        airinfo: {
-                            type: AirType,
-                            flightinfo: {},
-                            persons: this.pList
+                    cid: this.userID,
+                    persons: this.pList,
+                    airinfo: {
+                        airtype: types,
+                        startDate: startDate,
+                        backDate: endDate,
+                        startCity: startCity,
+                        backCity: endCity,
+                        flightInfo: {
+                            airID: this.startInfo.AirID,
+                            ticketID: this.startInfo.jipiao.TicketID,
+                            detailID: this.startInfo.piaojia.DetailID,
+                            toFlightInfo: toIDS
+                        },
+                        backFlightInfo: {
+                            airID: this.backInfo.AirID,
+                            ticketID: this.backInfo.jipiao.TicketID,
+                            detailID: this.backInfo.piaojia.DetailID,
+                            toFlightInfo: toBackIDS
                         }
                     }
                 }
-                
+                console.log(params)
                 this.utils.http({
                     name: this,
-                    uri: '/passenger/getpersons',
-                    methods: 'post',
-                    params: {
-                        params: { id: this.userID}
-                    },
+                    uri: '/order/submitorder',
+                    method: 'post',
+                    params: params,
                     success: res=>{
+                        console.log(111)
                         if(res.status === 200 && res.data.status === 1){
-                            this.list[0].values = res.data.data
+                            
                         }
                     }
                 })
@@ -300,7 +284,6 @@ export default {
     created () {
         const _account = this.utils.getAccount(this)
         this.userID = _account.id || ''
-        console.log(this.userID)
 
         this.PersonList.push(JSON.parse(JSON.stringify(this.person)))   
         this.airPrice = parseInt(this.utils.getItem('orderprice'))   
@@ -355,6 +338,55 @@ function countAmount(vue){
         }
     }
     vue.amountPrice = amount
+}
+
+function checkVal(vue) {
+    let ischeck = true
+    let p = vue.PersonList        
+
+    for(let i in p){
+        vue.pList[i] = {}
+        vue.pList[i].PName = vue.utils.clearSpace(p[i].CjrName)
+        vue.pList[i].PCode = ""
+        vue.pList[i].PHZ = vue.utils.clearSpace(p[i].HZH)
+        vue.pList[i].PBD = vue.utils.clearSpace(p[i].CSRQ)
+        vue.pList[i].PSEX = vue.utils.clearSpace(p[i].Sex)
+        vue.pList[i].PHZYXQ = vue.utils.clearSpace(p[i].HZYXQ)
+        vue.pList[i].PTYPE = p[i].type
+        vue.pList[i].FlightID = 0
+        vue.pList[i].ID = p[i].id
+        let myDate = vue.utils.dateFormat('yyyy')
+        let age = 0
+        if(p[i].CSRQ.length > 1){
+            age = parseInt(myDate) - parseInt(p[i].CSRQ.substr(0,4))
+        }
+        if(p[i].CjrName.length < 1 || p[i].CjrName.length > 20 || !vue.utils.englishName(p[i].CjrName)){
+            vue.utils.alert(vue, '第' + (parseInt(i)+1) + '位乘机人姓名必须是拼音或英文')
+            ischeck = false
+            break
+        }else if(p[i].HZH.length < 1){
+            vue.utils.alert(vue, '请输入第' + (parseInt(i)+1) + '位乘机人的护照号码')
+            ischeck = false
+            break
+        }else if(p[i].HZH.length > 50 || vue.utils.isEn(p[i].HZH) || !vue.utils.isNumberEn(p[i].HZH)){
+            vue.utils.alert(vue, '第' + (parseInt(i)+1) + '位乘机人护照号码格式不正确')
+            ischeck = false
+            break
+        }else if(p[i].CSRQ.length < 1){
+            vue.utils.alert(vue, '请选择第' + (parseInt(i)+1) + '位乘机人的出生日期')
+            ischeck = false
+            break
+        }else if(p[i].type == '0' && age > 12){
+            vue.utils.alert(vue, '第' + (parseInt(i)+1) + '位乘机人年龄超出，请重新选择出生日期')
+            ischeck = false
+            break
+        }else if(p[i].Sex.length < 1){
+            vue.utils.alert(vue, '请选择第' + (parseInt(i)+1) + '位乘机人的性别')
+            ischeck = false
+            break
+        }
+    }
+    return ischeck
 }
 
 </script>

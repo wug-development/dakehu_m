@@ -44,13 +44,9 @@ export default {
                             path: '/index'
                         })
                     } else {
-                        this.MessageBox(res.msg)
+                        this.MessageBox(res.data.msg)
                     }
                 })
-                .catch((e)=> {
-                    console.log(e)
-                    this.MessageBox({title:'温馨提示',message:'登录失败，请检查网络！'})
-                })  
             }
         }
     }
