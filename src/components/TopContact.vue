@@ -3,39 +3,25 @@
         <div class="header">
             <div class="icon icon-back" id="icon-back" @click="backPage"></div>
             <div class="search-box">
-                <input type="search" placeholder="请输入姓名公司进行搜索">
+                <input type="search" v-model="searchKey" placeholder="请输入姓名公司进行搜索" @change="searchList()">
                 <div class="btn_search"></div>
             </div>
         </div>
         <div class="contact-body">
             <div class="title">常用乘机人</div>
             <ul class="list">
-                <li class="item">
+                <li class="item" v-for="(item, i) in personList">
                     <div class="item-title">
                         <span>姓名</span>
-                        <span class="name">王娜</span>
-                        <span class="company">M妙奇艺</span>
+                        <span class="name">{{item.dcPerName}}</span>
+                        <span class="company">{{item.uname}}</span>
                     </div>
                     <div class="item-body">
-                        <div><span>乘机人手机</span>123456789784</div>
-                        <div><span>紧急人手机</span>1234979474566</div>
-                        <div><span>护照号</span>14541244747</div>
-                        <div><span>护照到期日</span>2019/5/30</div>
-                        <div><span>证件号码</span>142309188106649988</div>
-                    </div>
-                </li>
-                <li class="item">
-                    <div class="item-title">
-                        <span>姓名</span>
-                        <span class="name">王娜</span>
-                        <span class="company">M妙奇艺</span>
-                    </div>
-                    <div class="item-body">
-                        <div><span>乘机人手机</span>123456789784</div>
-                        <div><span>紧急人手机</span>1234979474566</div>
-                        <div><span>护照号</span>14541244747</div>
-                        <div><span>护照到期日</span>2019/5/30</div>
-                        <div><span>证件号码</span>142309188106649988</div>
+                        <div><span>乘机人手机</span>{{item.dcPhone}}</div>
+                        <div><span>紧急人手机</span>{{item.dcUrgentPhone}}</div>
+                        <div><span>护照号</span>{{item.dcPassportNo}}</div>
+                        <div><span>护照到期日</span>{{item.dcPassportDate}}</div>
+                        <div><span>证件号码</span>{{item.dcIDNumber}}</div>
                     </div>
                 </li>
             </ul>
@@ -46,10 +32,46 @@
 <script>
 export default {
     name: 'TopContact',
+    data () {
+        return {
+            personList: [],
+            pList: [],
+            searchKey: ''
+        }
+    },
     methods: {
         backPage: function(){
             this.$router.go(-1)
+        },
+        searchList () {
+            this.personList = []
+            if (this.searchKey) {
+                for (let i in this.pList) {
+                    if (this.pList[i]['dcPerName'].indexOf() > -1 || this.pList[i]['uname'].indexOf() > -1) {
+                        this.personList.push(this.pList[i])
+                    }
+                }
+            } else {
+                this.personList = this.pList
+            }
         }
+    },
+    created () {
+        let acount = JSON.parse(sessionStorage.getItem('account'))
+        this.utils.http({
+            name: this,
+            uri: '/people/getpersonlist',
+            params: {
+                params: { cid: acount.id}
+            },
+            success: res=>{
+                console.log(res)
+                if(res.status === 200 && res.data.status === 1){
+                    this.personList = res.data.data
+                    this.pList = res.data.data
+                }
+            }
+        })
     }
 }
 </script>

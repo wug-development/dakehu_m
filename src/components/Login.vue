@@ -9,7 +9,7 @@
             <input type="text" v-model="pass" placeholder="请输入密码">
         </div>
         <div class="tit">
-            <span>提示：账号或者密码错误</span>
+            <span v-if="tit">提示：{{tit}}</span>
         </div>
         <div class="btn" @click="login">登录</div>
     </div>
@@ -21,7 +21,8 @@ export default {
     data () {
         return {
             acount: '',
-            pass: ''
+            pass: '',
+            tit: ''
         }
     },
     methods: {
@@ -37,7 +38,6 @@ export default {
                         "upass": this.pass
                     }
                 }).then(res => {
-                    console.log(res)
                     if (res.data.status == '1') {
                         sessionStorage.setItem('account', JSON.stringify(res.data.data[0]))
                         this.$router.push({

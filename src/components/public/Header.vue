@@ -15,11 +15,11 @@
         <div class="title">{{titlename}}</div>
         <div class="icon icon-menu" id="icon-menu" @click="showMenu">
             <div id="layer-menu" v-show="isShow" @click="isShow = false" class="layer">
-                <ul class="header-menu-box">
-                    <li><div class="icon-bg icon-order"></div><div>订单查询</div></li>
-                    <li><div class="icon-bg icon-fkjl"></div><div>付款记录</div></li>
-                    <li><div class="icon-bg icon-cjr"></div><div>常用乘机人</div></li>
-                    <li><div class="icon-bg icon-exit"></div><div>退出</div></li>
+                <ul class="header-menu-box" @click="toPage">
+                    <li id="orderlist"><div class="icon-bg icon-order"></div><div>订单查询</div></li>
+                    <li id="paymentrecord"><div class="icon-bg icon-fkjl"></div><div>付款记录</div></li>
+                    <li id="contacts"><div class="icon-bg icon-cjr"></div><div>常用乘机人</div></li>
+                    <li id="loginout"><div class="icon-bg icon-exit"></div><div>退出</div></li>
                 </ul>
             </div>
         </div>        
@@ -56,6 +56,19 @@ export default {
             if(e.target.id == 'icon-menu'){
                 this.isShow = true
             } 
+        },
+        toPage (e) {
+            let _id = e.target.parentNode.id
+            if (_id === 'loginout') {
+                sessionStorage.setItem('account', '')
+                this.$router.push({
+                    path: '/'
+                })
+            } else {
+                this.$router.push({
+                    path: '/' + _id
+                })
+            }
         }
     },
     watch: {
@@ -67,7 +80,13 @@ export default {
         this.titlename = this.name
         if (this.bgcolor) {
             this.backgroundcolor = this.bgcolor
-        }        
+        }
+        let account =  sessionStorage.getItem('account')
+        if (!account) {
+            this.$router.push({
+                path: '/'
+            })
+        }
     }
 }
 </script>

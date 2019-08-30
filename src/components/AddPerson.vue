@@ -274,7 +274,13 @@ export default {
                     success: res=>{
                         console.log(111)
                         if(res.status === 200 && res.data.status === 1){
-                            
+                            this.MessageBox('下单成功！').then(action => {
+                                this.$router.push({
+                                    path: '/orderlist'
+                                })
+                            })                            
+                        } else {
+                            this.MessageBox('下单成功！', res.data.msg)
                         }
                     }
                 })

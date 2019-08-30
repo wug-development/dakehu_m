@@ -4,11 +4,11 @@
         <div class="orderlist-body">
             <div class="tab">
                 <div class="tab_money tab_paycount">
-                    <div class="money">&yen;<span>187,224</span></div>
+                    <div class="money">&yen;<span>{{payCount}}</span></div>
                     <div class="explain">付款总额</div>
                 </div>
                 <div class="tab_money tab_debt">
-                    <div class="money">&yen;<span>187，224</span></div>
+                    <div class="money">&yen;<span>{{qiankuan}}</span></div>
                     <div class="explain">剩余欠款</div>
                 </div>
             </div>
@@ -18,51 +18,31 @@
             <div class="myorder">
                 <div class="title">我的订单</div>
                 <ul class="list">
-                    <li class="item">
+                    <li class="item" v-for="(item, i) in orderList" :key="i" @click="toOrderDetail(item.OrderID)">
                         <div class="no-status">
-                            <div class="no">订单号<span>78556</span></div>
-                            <div class="status wait">等待处理</div>
+                            <div class="no">订单号<span>{{item.OrderID}}</span></div>
+                            <div class="status wait">{{item.Status}}</div>
                         </div>
                         <div class="item-head">
                             <div>乘机人</div>
                             <div>行程</div>
                             <div>出发日期</div>
                         </div>
-                        <div class="item-body">
-                            <div>武广</div>
-                            <div>北京-上海</div>
-                            <div>2019/5/12</div>                            
+                        <div class="item-body" v-for="(p, index) in item.person" :key="index">
+                            <div>{{p.pername}}</div>
+                            <div>{{item.startCity}}-{{item.endCity}}</div>
+                            <div>{{item.startDate}}</div>
                         </div>
                         <div class="recordno-money">
-                            <div class="recordno">记录编号<span>预订未成功</span></div>
-                            <div class="money">金额<span>￥124562</span></div>
-                        </div>
-                    </li>
-                    <li class="item">
-                        <div class="no-status">
-                            <div class="no">订单号<span>78556</span></div>
-                            <div class="status">出票完成</div>
-                        </div>
-                        <div class="item-head">
-                            <div>乘机人</div>
-                            <div>行程</div>
-                            <div>出发日期</div>
-                        </div>
-                        <div class="item-body">
-                            <div>武广</div>
-                            <div>北京-上海</div>
-                            <div>2019/5/12</div>                            
-                        </div>
-                        <div class="recordno-money">
-                            <div class="recordno">记录编号<span>WERSDWR</span></div>
-                            <div class="money">金额<span>￥124562</span></div>
+                            <div class="recordno">记录编号<span>{{item.OrderCode || "预订未成功"}}</span></div>
+                            <div class="money">金额<span>￥{{item.TotalPrice}}</span></div>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-</template>
+</template>                      
 
 <script>
 import Header from './public/HeaderBack.vue'
@@ -71,12 +51,44 @@ export default {
     name: 'OrderList',
     data () {
         return {
-            pageTitle: '订单'
+            pageTitle: '订单',
+            payCount: 0,
+            qiankuan: 0,
+            orderList: []
         }
     },
     components: {
         Header
     },
+    methods: {
+        toOrderDetail (id) {
+            this.$router.push({
+                path: '/orderdetail?id=' + id
+            })
+        }
+    },
+    created () {
+        let acount = JSON.parse(sessionStorage.getItem('account'))
+        this.utils.http({
+            name: this,
+            uri: '/order/getorderlist',
+            params: {
+                params: { cid: acount.id}
+            },
+            success: res=>{
+                console.log(res)
+                if(res.status === 200 && res.data.status === 1){
+                    this.orderList = res.data.data.orderlist
+                    this.payCount = format(res.data.data.paycount)
+                    this.qiankuan = format(res.data.data.qiankuan)
+                }
+            }
+        })
+    }
+}
+
+function format (num) {
+    return (num.toFixed(0) + '').replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,');
 }
 </script>
 
@@ -176,6 +188,7 @@ export default {
                         font-size: .24rem;
                         justify-content: space-around;
                         margin-top: .3rem;
+                        align-items: center;
                         div{
                             width: 2.5rem;
                             overflow: hidden;

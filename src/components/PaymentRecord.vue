@@ -4,50 +4,33 @@
         <div class="payrecord-body">
             <div class="tab">
                 <div class="tab_money tab_paycount">
-                    <div class="money">&yen;<span>187,224</span></div>
+                    <div class="money">&yen;<span>{{payCount}}</span></div>
                     <div class="explain">付款总额</div>
                 </div>
                 <div class="tab_money tab_debt">
-                    <div class="money">&yen;<span>187，224</span></div>
+                    <div class="money">&yen;<span>{{qiankuan}}</span></div>
                     <div class="explain">剩余欠款</div>
                 </div>
             </div>
             <div class="recode-body">
                 <div class="title">付款记录</div>
                 <ul class="recode-list">
-                    <li class="item">
+                    <li class="item" v-for="(item, i) in paylist">
                         <div class="log">
                             <div class="log-acount">
                                 <div class="log-money">
-                                    <div class="money">￥108556</div>
+                                    <div class="money">￥{{item.dnMoney}}</div>
                                     <div class="explain">汇款金额</div>
                                 </div>
                                 <div class="log-paytype">
-                                    <div class="paytype">付款方式：<span>支付宝</span></div>
-                                    <div class="paydate">日期：<span>2019/5/20</span></div>
-                                    <div class="paycompany">单位：M妙奇艺</div>
+                                    <div class="paytype">付款方式：<span>{{item.dcPayType}}</span></div>
+                                    <div class="paydate">日期：<span>{{item.dtAddDatetime}}</span></div>
+                                    <div class="paycompany">单位：{{uname}}</div>
                                 </div>
                             </div>
-                            <div class="remarks">备注</div>
+                            <div class="remarks">备注：{{item.dcRemarks}}</div>
                         </div>
-                        <div class="status">等<br>待<br>确<br>认</div>
-                    </li>
-                    <li class="item">
-                        <div class="log">
-                            <div class="log-acount">
-                                <div class="log-money">
-                                    <div class="money">￥108556</div>
-                                    <div class="explain">汇款金额</div>
-                                </div>
-                                <div class="log-paytype">
-                                    <div class="paytype">付款方式：<span>支付宝</span></div>
-                                    <div class="paydate">日期：<span>2019/5/20</span></div>
-                                    <div class="paycompany">单位：M妙奇艺</div>
-                                </div>
-                            </div>
-                            <div class="remarks">备注</div>
-                        </div>
-                        <div class="status">等<br>待<br>确<br>认</div>
+                        <div class="status" v-html="item.dnStatus == 1? '已<br>确<br>认': '等<br>待<br>确<br>认'"></div>
                     </li>
                 </ul>
             </div>
@@ -62,12 +45,39 @@ export default {
     name: 'PaymentRecord',
     data () {
         return {
-            pageTitle: '付款记录'
+            pageTitle: '付款记录',
+            uname: '',
+            payCount: 0,
+            qiankuan: 0,
+            paylist: []
         }
     },
     components: {
         Header
     },
+    created () {        
+        let acount = JSON.parse(sessionStorage.getItem('account'))
+        this.uname = acount.uname
+        this.utils.http({
+            name: this,
+            uri: '/payrecord/getrecordlist',
+            params: {
+                params: { cid: acount.id}
+            },
+            success: res=>{
+                console.log(res)
+                if(res.status === 200 && res.data.status === 1){
+                    this.paylist = res.data.data.orderlist
+                    this.payCount = format(res.data.data.paycount)
+                    this.qiankuan = format(res.data.data.qiankuan)
+                }
+            }
+        })
+    }
+}
+
+function format (num) {
+    return (num.toFixed(0) + '').replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,');
 }
 </script>
 
