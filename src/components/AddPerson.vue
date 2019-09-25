@@ -244,6 +244,7 @@ export default {
 
                 const params = {
                     cid: this.userID,
+                    cname: this.username,
                     persons: this.pList,
                     airinfo: {
                         airtype: types,
@@ -290,6 +291,7 @@ export default {
     created () {
         const _account = this.utils.getAccount(this)
         this.userID = _account.id || ''
+        this.username = _account.uname
 
         this.PersonList.push(JSON.parse(JSON.stringify(this.person)))   
         this.airPrice = parseInt(this.utils.getItem('orderprice'))   
