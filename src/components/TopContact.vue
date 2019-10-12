@@ -47,7 +47,7 @@ export default {
             this.personList = []
             if (this.searchKey) {
                 for (let i in this.pList) {
-                    if (this.pList[i]['dcPerName'].indexOf() > -1 || this.pList[i]['uname'].indexOf() > -1) {
+                    if (this.pList[i]['dcPerName'].indexOf(this.searchKey) > -1 || this.pList[i]['uname'].indexOf(this.searchKey) > -1) {
                         this.personList.push(this.pList[i])
                     }
                 }
@@ -62,7 +62,12 @@ export default {
             name: this,
             uri: '/people/getpersonlist',
             params: {
-                params: { cid: acount.id}
+                params: { 
+                    cid: acount.id,
+                    page: 1,
+                    pagenum: 5,
+                    filtername: ''
+                }
             },
             success: res=>{
                 console.log(res)

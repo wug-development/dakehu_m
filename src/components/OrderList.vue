@@ -73,7 +73,16 @@ export default {
             name: this,
             uri: '/order/getorderlist',
             params: {
-                params: { cid: acount.id}
+                params: { 
+                    cid: acount.id,
+                    page: 1, 
+                    pagenum: 5, 
+                    sdate: '', 
+                    edate: '', 
+                    filtername: '', 
+                    tno: '',
+                    subcid: ''
+                }
             },
             success: res=>{
                 console.log(res)

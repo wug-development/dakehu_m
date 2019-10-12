@@ -2,15 +2,15 @@
     <div id="OrderDetail" class="pubbody orderdetail-box">
         <Header :name="pageTitle"></Header>
         <div class="detail-head">
-            <div class="order-status"><div>{{orderInfo.dnStatus == 0? '等待处理' : '预定成功'}}</div><span>预订时间：{{checkTime(orderInfo.dtAddTime)}}</span></div>
+            <div class="order-status"><div>{{orderInfo.dnStatus == 0? '等待处理' : '预定成功'}}</div><span>预订时间：{{orderInfo.dtAddTime}}</span></div>
             <div class="service"><div>{{orderInfo.dcAdminName}}</div><span>（您的客服专员）</span> </div>
             <div class="notice">
                 请仔细核对您的订单详情<span>(取消此订单请联系管理员！)</span>
             </div>
         </div>
-        <div class="detail-body" v-if="orderInfo.dcStartCity">
+        <div class="detail-body">
             <div class="title">订单信息</div>
-            <ul class="info">
+            <ul class="info" v-if="orderInfo.dcStartCity">
                 <li><span>联系人</span>{{orderInfo.dcLinkName}}</li>
                 <li><span>行程</span>{{orderInfo.dcStartCity}}-{{orderInfo.dcBackCity}}</li>
                 <li><span>出发日期</span>{{orderInfo.dcStartDate}}</li>
@@ -22,15 +22,18 @@
                 <li><span>记录编号</span>{{orderInfo.dcOrderCode}}</li>
                 <li><span>CTCM</span></li>
                 <li><span>CTCT</span></li>
-                <li><span>票号</span>996-564758112248</li>
+                <li><span>票号</span>{{orderInfo.dcOrderCode}}</li>
                 <li><span>折扣</span></li>
                 <li><span>订单金额</span>1260 ( 1180  + 税金 60 + 服务费 20 )*1人</li>
                 <li><span>备注</span></li>
             </ul>
-            <div class="remark">
+            <div class="remark" v-if="orderInfo.dnAirType == 2">
+                {{orderInfo.dcContent}}
+            </div>
+            <div class="remark" v-else>
                 <textarea placeholder="备注">{{orderInfo.dcContent}}</textarea>
             </div>
-            <div class="flight-info">
+            <div class="flight-info" v-if="orderInfo.dcStartCity">
                 <div class="itembox">
                     <div class="title">
                         <span>
@@ -82,6 +85,7 @@
                     </div>
                 </div>
             </div>
+            <template v-if="orderInfo.person && orderInfo.person.length">
             <div class="title">乘机人信息</div>
             <ul class="man-list">
                 <li class="man-item" v-for='(p, index) in orderInfo.person'>
@@ -90,6 +94,7 @@
                     <div><span>护照号码</span>{{p.pno}}</div>
                 </li>
             </ul>
+            </template>
         </div>
     </div>
 </template>

@@ -39,8 +39,8 @@
                     </div>
                 </div>
                 <div class="book-box" v-show="ticketType==2">
-                    <textarea name="" id="" cols="30" rows="10" placeholder="请尽量写清楚您的航班需求，我们将量身为您制定行程！"></textarea>
-                    <div class="btn">
+                    <textarea name="" id="" cols="30" rows="10" v-model="dzContent" placeholder="请尽量写清楚您的航班需求，我们将量身为您制定行程！"></textarea>
+                    <div class="btn" @click="saveDingzhi">
                         提交
                     </div>
                 </div>
@@ -183,7 +183,8 @@ export default {
             other: {
                 linkman: '',
                 subc: 0
-            }
+            },
+            dzContent: ''
         }
     },
     methods: {
@@ -294,6 +295,31 @@ export default {
                 this.other.linkman = ''
             } else {
                 this.other.linkman = i
+            }
+        },
+        saveDingzhi () {
+            if (this.dzContent != ''){
+                let params = {
+                    content: this.dzContent,
+                    cid: this.accountInfo.id
+                }
+                this.utils.http({
+                    name: this,
+                    uri: '/order/submitdingzhiorder',
+                    method: 'post',
+                    params: params,
+                    success: res=>{
+                        if(res.status === 200 && res.data.status === 1){
+                            this.MessageBox('下单成功！').then(action => {
+                                this.$router.push({
+                                    path: '/orderlist'
+                                })
+                            })                            
+                        } else {
+                            this.MessageBox('下单成功！', res.data.msg)
+                        }
+                    }
+                })
             }
         }
     },

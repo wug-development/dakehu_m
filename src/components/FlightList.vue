@@ -167,10 +167,10 @@ export default {
             this.utils.setItem('saircode', scode)
             this.utils.setItem('sairid', id)
             if(this.flightType === '往返'){
-            let e = [];
-            e.push(this.backList[index])
-            this.utils.setItem('backFlight', JSON.stringify(e))
-            this.$router.push({ path: '/returnflight' })
+                let e = [];
+                e.push(this.backList[index])
+                this.utils.setItem('backFlight', JSON.stringify(e))
+                this.$router.push({ path: '/returnflight' })
             }else{
             this.$router.push({ path: '/flightinfo' })
             }
@@ -433,45 +433,45 @@ function getFightList(vue, param){
                     uri: 'FindAirComJixingServlet',
                     params: {
                         params: {
-                        aircom: JSON.stringify(clist),
-                        jixing: JSON.stringify(alist)
+                            aircom: JSON.stringify(clist),
+                            jixing: JSON.stringify(alist)
                         }
                     },
                     name: vue,
                     success: regs => {
                         if(regs.status === 200 && regs.data.airInfo.length > 0){
-                        len = slist.length
-                        for(let i=0; i<len; i++){
-                            let sitem = slist[i]
-                            for(let m=0; m<sitem.length; m++){
-                            sitem[m].airinfo = regs.data.aircomInfo[i]
+                            len = slist.length
+                            for(let i=0; i<len; i++){
+                                let sitem = slist[i]
+                                for(let m=0; m<sitem.length; m++){
+                                    sitem[m].airinfo = regs.data.aircomInfo[i]
+                                }
+                                if(vue.flightType === '往返'){
+                                    let eitem = elist[i]
+                                    for(let n=0; n<eitem.length; n++){
+                                        eitem[n].airinfo = regs.data.aircomInfo[len+i]
+                                    }
+                                }
                             }
-                            if(vue.flightType === '往返'){
-                            let eitem = elist[i]
-                            for(let n=0; n<eitem.length; n++){
-                                eitem[n].airinfo = regs.data.aircomInfo[len+i]
-                            }
-                            }
-                        }
 
-                        let m = 0;
-                        for(let i=0; i<slist.length; i++){
-                            for(let j in slist[i]){
-                            slist[i][j].airtype = regs.data.airInfo[m++]
+                            let m = 0;
+                            for(let i=0; i<slist.length; i++){
+                                for(let j in slist[i]){
+                                    slist[i][j].airtype = regs.data.airInfo[m++]
+                                }
                             }
-                        }
-                        vue.startList = compare(slist)
-                        if(vue.flightType === '往返'){
-                            for(let i=0; i<elist.length; i++){
-                            for(let j in elist[i]){
-                                elist[i][j].airtype = regs.data.airInfo[m++]
+                            vue.startList = compare(slist)
+                            if(vue.flightType === '往返'){
+                                for(let i=0; i<elist.length; i++){
+                                    for(let j in elist[i]){
+                                        elist[i][j].airtype = regs.data.airInfo[m++]
+                                    }
+                                }
+                                vue.backList = elist
                             }
-                            }
-                            vue.backList = elist
-                        }
                         }else{                  
-                        vue.isLoading = false
-                        vue.notFind = true
+                            vue.isLoading = false
+                            vue.notFind = true
                         }
                     },
                     fail: ()=>{
@@ -499,13 +499,13 @@ function getPiaojia(pj, m, num){
     let dt = {}
     let len = pj.length
     if(len > 0){
-    list = pj.filter(function(x){
-        return parseInt(x.startM) <= parseInt(m) && parseInt(m) <= parseInt(x.endM)
-    })
-    list.sort(function(x,y){
-        return parseInt(x.TicketPrice) - parseInt(y.TicketPrice)
-    })
-    dt = list[0]
+        list = pj.filter(function(x){
+            return parseInt(x.startM) <= parseInt(m) && parseInt(m) <= parseInt(x.endM)
+        })
+        list.sort(function(x,y){
+            return parseInt(x.TicketPrice) - parseInt(y.TicketPrice)
+        })
+        dt = list[0]
     }
     return dt
 }
@@ -536,13 +536,16 @@ function compare(dlist){
     let zf = [];
     let zz = [];
     zf = dlist.filter(function(i){
-    return i[0].otherFlight.length<1
+        return i[0].otherFlight.length<1
     })
     zz = dlist.filter(function(i){
-    return i[0].otherFlight.length>0 && i[0].piaojia
+        return i[0].otherFlight.length>0 && i[0].piaojia
+    })
+    zf.sort(function(x,y){
+        return parseInt(x[0].piaojia.TicketPrice) - parseInt(y[0].piaojia.TicketPrice)
     })
     zz.sort(function(x,y){
-    return parseInt(x[0].piaojia.TicketPrice) - parseInt(y[0].piaojia.TicketPrice)
+        return parseInt(x[0].piaojia.TicketPrice) - parseInt(y[0].piaojia.TicketPrice)
     })
     return zf.concat(zz)
 }
@@ -555,18 +558,18 @@ function getUserInfo(vue, uid){
         param.append("userID", userID);
         //获取用户信息
         vue.utils.ajax({
-        name: vue,
-        uri: 'SendUserInfoServlet',
-        method: 'post',
-        params: param,
-        success: res=>{
-            if(res.status === 200){
-            vue.name = res.data.UserName
-            vue.tel = res.data.Mobile
-            vue.email = res.data.emall
-            vue.pass = res.data.Password
+            name: vue,
+            uri: 'SendUserInfoServlet',
+            method: 'post',
+            params: param,
+            success: res=>{
+                if(res.status === 200){
+                    vue.name = res.data.UserName
+                    vue.tel = res.data.Mobile
+                    vue.email = res.data.emall
+                    vue.pass = res.data.Password
+                }
             }
-        }
         })
     }
 }
