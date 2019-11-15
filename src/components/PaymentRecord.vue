@@ -15,7 +15,7 @@
             <div class="recode-body">
                 <div class="title">付款记录</div>
                 <ul class="recode-list">
-                    <li class="item" v-for="(item, i) in paylist">
+                    <li class="item" v-for="(item, i) in paylist" :key="i">
                         <div class="log">
                             <div class="log-acount">
                                 <div class="log-money">
