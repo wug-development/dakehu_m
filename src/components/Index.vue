@@ -195,7 +195,7 @@ export default {
                 this.utils.alert(this, '请选择到达城市')
             }else if (this.flightInfo.startTime === "") {
                 this.utils.alert(this, '请选择出发时间')
-            } else if (this.ticketType === 1 && this.flightInfo.endTime === "") {
+            } else if (this.flightType === 1 && this.ticketType === 1 && this.flightInfo.endTime === "") {
                 this.utils.alert(this, '请选择到达时间')
             } else {
                 this.utils.setItem("scity", this.flightInfo.startCity)
@@ -208,9 +208,15 @@ export default {
                 this.utils.setItem("etime", this.flightInfo.endTime)
                 this.utils.setItem("ttype", this.ticketType)
                 this.utils.setItem("ftype", this.flightType)
-                this.$router.push({
-                    path: '/flightlist'
-                })
+                if (this.flightType === 1) {
+                    this.$router.push({
+                        path: '/flightlist'
+                    })
+                } else {
+                    this.$router.push({
+                        path: '/gnflightlist'
+                    })
+                }
             }
         },
         selStartCity: function(val){
@@ -272,11 +278,18 @@ export default {
         changeRegion: function (v) {
             this.flightType = v
             this.ticketType = v
-            if (v) {
-                this.flightInfo.endCityText = '洛杉矶国际机场' + '(LAX)'
-            } else {
-                this.flightInfo.endCityText = '上海虹桥机场' + '(SHA)'
+            let ecity = '洛杉矶  (加利福尼亚州) '
+            let ecode = 'LAX'
+            let eflight = '洛杉矶国际机场'
+            if (!v) {
+                ecity = '上海'
+                ecode = 'SHA'
+                eflight = '上海虹桥机场'
             }
+            this.flightInfo.endCity = ecity
+            this.flightInfo.endCityShort = ecode
+            this.flightInfo.endCityValue = eflight
+            this.flightInfo.endCityText = eflight + '(' + ecode + ')'
         },
         showStartDate(){
             this.startEndTime = this.utils.dateFormat(this.utils.getAfterNDate((new Date()), 1, 'y'), 'yyyy-MM-dd')
@@ -348,14 +361,13 @@ export default {
         let ecode = this.utils.getItem("ecode") || 'LAX'
         let stime = this.utils.getItem("stime") || this.utils.dateFormat(this.utils.getAfterNDate(1,'d'),'yyyy-MM-dd')
         let etime = this.utils.getItem("etime") || this.utils.dateFormat(this.utils.getAfterNDate(2,'d'),'yyyy-MM-dd')
-        let type = this.utils.getItem("type") || true
+        let ttype = this.utils.getItem("ttype") || 1
+        let ftype = this.utils.getItem("ftype") || 1
         let scity = this.utils.getItem("scity") || '北京'
         let ecity = this.utils.getItem("ecity") || '洛杉矶  (加利福尼亚州) '
         let sflight = this.utils.getItem("sflight") || '北京首都机场'
         let eflight = this.utils.getItem("eflight") || '洛杉矶国际机场'
-        if(type == false || type == 'false'){
-            this.ticketType = 0
-        }
+        this.ticketType = Number(ttype)
         this.flightInfo.startCity = scity
         this.flightInfo.startCityShort = scode
         this.flightInfo.startCityValue = sflight
@@ -366,6 +378,7 @@ export default {
         this.flightInfo.endCityText = eflight + '(' + ecode + ')'
         this.flightInfo.startTime = stime
         this.flightInfo.endTime = etime
+        this.flightType = Number(ftype)
 
         this.userID = this.utils.getItem("kxUserID") || ''
         // 获取城市列表

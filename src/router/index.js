@@ -7,8 +7,12 @@ import Service from '@/components/Service'
 import Suggest from '@/components/Suggest'
 import FlightList from '@/components/FlightList'
 import ReturnFlight from '@/components/ReturnFlight'
+import GNFlightList from '@/components/GNFlightList'
+import GNSelFlight from '@/components/GNSelFlight'
 import FlightInfo from '@/components/FlightInfo'
 import AddPerson from '@/components/AddPerson'
+import WhiteInfo from '@/components/WhiteInfo'
+import PersonList from '@/components/PersonList'
 import TopContact from '@/components/TopContact'
 import PaymentRecord from '@/components/PaymentRecord'
 import SearchOrder from '@/components/SearchOrder'
@@ -55,9 +59,33 @@ export default new Router({
             component: ReturnFlight
         },
         {
+            path: '/gnflightlist',
+            name: 'GNFlightList',
+            component: GNFlightList
+        },
+        {
+            path: '/selflight',
+            name: 'GNSelFlight',
+            component: GNSelFlight
+        },
+        {
             path: '/flightinfo',
             name: 'FlightInfo',
             component: FlightInfo
+        },
+        {
+            path: '/whiteinfo',
+            name: 'WhiteInfo',
+            meta: {
+                keepAlive: true,// 此组件需要被缓存                
+                isBack: false// 用于判断上一个页面是哪个
+            },
+            component: WhiteInfo
+        },
+        {
+            path: '/personlist',
+            name: 'PersonList',
+            component: PersonList
         },
         {
             path: '/addperson',

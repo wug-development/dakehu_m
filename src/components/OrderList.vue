@@ -21,7 +21,7 @@
                     <li class="item" v-for="(item, i) in orderList" :key="i" @click="toOrderDetail(item.OrderID)">
                         <div class="no-status">
                             <div class="no">订单号<span>{{item.OrderID}}</span></div>
-                            <div class="status wait">{{item.Status}}</div>
+                            <div :class='"status" + (item.Status==0?" wait":"")'>{{checkStatus(item.Status, item.isTicket)}}</div>
                         </div>
                         <div class="item-head">
                             <div>乘机人</div>
@@ -65,10 +65,24 @@ export default {
             this.$router.push({
                 path: '/orderdetail?id=' + id
             })
+        },
+        checkStatus(s, t) {
+            let _v = '等待处理'
+            if (s) {
+                if (t === 1) {
+                    _v = '出票完成'
+                } else if (t === 2) {
+                    _v = '退票'
+                } else {
+                    _v = '待出票'
+                }
+            }
+            return _v
         }
     },
     created () {
         let acount = JSON.parse(sessionStorage.getItem('account'))
+        console.log(acount)
         this.utils.http({
             name: this,
             uri: '/order/getorderlist',
@@ -104,6 +118,8 @@ function format (num) {
 <style lang="scss">
     @import '@/assets/sass/set.scss';
     .orderlist-body{
+        height: 100%;
+        overflow: hidden auto;
         .tab{
             padding: .6rem .2rem;
             background-color: #fff;

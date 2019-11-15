@@ -304,25 +304,25 @@ export default {
                 var param = new URLSearchParams();
                 param.append("phone", this.tel);
                 this.utils.ajax({
-                name: this,
-                uri: 'Wangjimima',
-                method: 'post',
-                params: param,
-                success: res=> {
-                    this.Indicator.close();
-                    let data = res.data
-                    if (data == "-1") {
-                        this.utils.alert(this, "您还不是凯行网的会员，请先注册")
-                    } else if (data == "0") {
-                        this.utils.alert(this, "短信发送失败，请联系服务人员")
-                    } else if (data == "1") {
-                        this.utils.alert(this, "您的密码已经发送到您的手机，请注意查收")
+                    name: this,
+                    uri: 'Wangjimima',
+                    method: 'post',
+                    params: param,
+                    success: res=> {
+                        this.Indicator.close();
+                        let data = res.data
+                        if (data == "-1") {
+                            this.utils.alert(this, "您还不是凯行网的会员，请先注册")
+                        } else if (data == "0") {
+                            this.utils.alert(this, "短信发送失败，请联系服务人员")
+                        } else if (data == "1") {
+                            this.utils.alert(this, "您的密码已经发送到您的手机，请注意查收")
+                        }
+                    },
+                    fail: ()=>{
+                        this.Indicator.close();
+                        this.utils.alert(this, "网络连接失败，请刷新重试")
                     }
-                },
-                fail: ()=>{
-                    this.Indicator.close();
-                    this.utils.alert(this, "网络连接失败，请刷新重试")
-                }
                 })
             } else {
                 this.utils.alert(this, "请输入正确的手机号")
