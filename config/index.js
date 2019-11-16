@@ -52,7 +52,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: 'http://m.airkx.cn/',
+    assetsPublicPath: 'http://m.dakehu.airkx.cn/',
 
     /**
      * Source Maps
