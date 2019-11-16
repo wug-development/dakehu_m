@@ -49,6 +49,15 @@ export default {
                 })
             }
         }
+    },
+    created () {
+        let that = this
+        document.onkeypress = function(e) {
+            var keycode = document.all ? event.keyCode : e.which
+            if (keycode == 13) {
+                that.login()
+            }
+        }
     }
 }
 </script>
