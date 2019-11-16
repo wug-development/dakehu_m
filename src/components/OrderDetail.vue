@@ -20,12 +20,12 @@
             </ul>
             <ul class="info" v-if="orderInfo.dcOrderCode">
                 <li><span>记录编号</span>{{orderInfo.dcOrderCode}}</li>
-                <li><span>CTCM</span></li>
-                <li><span>CTCT</span></li>
+                <li><span>CTCM</span>{{orderInfo.dcCTCM}}</li>
+                <li><span>CTCT</span>{{orderInfo.dcCTCT}}</li>
                 <li><span>票号</span>{{orderInfo.dcOrderCode}}</li>
-                <li><span>折扣</span></li>
-                <li><span>订单金额</span>1260 ( 1180  + 税金 60 + 服务费 20 )*1人</li>
-                <li><span>备注</span></li>
+                <li><span>折扣</span>{{orderInfo.dnDiscount}}</li>
+                <li><span>订单金额</span>{{orderInfo.dnTotalPrice}} ( {{orderInfo.dnPrice}}  + 税金 {{orderInfo.dnTax}} )*{{orderInfo.person.length}}人</li>
+                <li><span>备注</span>{{orderInfo.dcContent}}</li>
             </ul>
             <div class="remark" v-if="orderInfo.dnAirType == 2">
                 {{orderInfo.dcContent}}

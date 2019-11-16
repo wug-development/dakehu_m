@@ -18,9 +18,12 @@ export default {
     },
     methods: {
         toPage: function (p) {
-            this.$router.push({
-                path: '/' + p
-            })
+            let _hash = window.location.hash
+            if (('#/' + p) != _hash) {
+                this.$router.push({
+                    path: '/' + p
+                })
+            }
         }
     },
     created () {

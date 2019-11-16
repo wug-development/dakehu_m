@@ -86,27 +86,27 @@
                     <mt-swipe :auto="4000">
                         <mt-swipe-item>
                             <div class="xyed-bg dxqk">
-                                <div class="moneys"><span>当前欠款</span><div>&yen;100000</div></div>
-                                <div class="company">保利科技的信用信息</div>
+                                <div class="moneys"><span>当前欠款</span><div>&yen;{{accountInfo.debt}}</div></div>
+                                <div class="company">{{accountInfo.username}}的信用信息</div>
                             </div>
                         </mt-swipe-item>
                         <mt-swipe-item>
                             <div class="xyed-bg xyed">
-                                <div class="moneys"><span>信用额度</span>&yen;100000</div>
-                                <div class="company">保利科技的信用信息</div>
+                                <div class="moneys"><span>信用额度</span>&yen;{{accountInfo.credit}}</div>
+                                <div class="company">{{accountInfo.username}}的信用信息</div>
                             </div>
                         </mt-swipe-item>
                         <mt-swipe-item>
                             <div class="xyed-bg jszq">
                                 <div class="moneys"><span>结算周期</span>自然月</div>
-                                <div class="company">保利科技的信用信息</div>
+                                <div class="company">{{accountInfo.username}}的信用信息</div>
                             </div>
                         </mt-swipe-item>
                     </mt-swipe>
                 </div>
             </div>
 
-            <div class="branchoffice">
+            <div class="branchoffice" v-if="subCompanyLinkMans.length">
                 <div class="tab-title">分公司信息</div>
                 <div class="branchoffice-box">
                     <div class="tab">
@@ -154,7 +154,10 @@ export default {
             accountInfo: {
                 id: '',
                 username: '',
-                password: ''
+                password: '',
+                credit: '',
+                debt: '',
+
             },
             flightInfo: {
                 startCity: '',
@@ -334,6 +337,19 @@ export default {
                     }
                 })
             }
+        },
+        getAccountInfo () {
+            this.$http.get(this.uris + '/company/getcompanyaccount', {params: {
+                id: this.accountInfo.id
+            }})
+            .then(res => {
+                if (res && res.data && res.data.status != 0) {
+                    console.log(res.data.data[0])
+                    let _info = res.data.data[0]
+                    this.accountInfo.credit = _info.credit
+                    this.accountInfo.debt = _info.debt
+                }
+            })
         }
     },
     components: {
@@ -389,6 +405,9 @@ export default {
 
         // 获取子公司和联系人
         getSubCompanyLinkman(this)
+
+        // 获取账户信息
+        this.getAccountInfo ()
     }
 }
 

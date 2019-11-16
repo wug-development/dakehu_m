@@ -19,7 +19,7 @@
                         <div class="log">
                             <div class="log-acount">
                                 <div class="log-money">
-                                    <div class="money">￥{{item.dnMoney}}</div>
+                                    <div class="money">&yen;{{item.dnMoney}}</div>
                                     <div class="explain">汇款金额</div>
                                 </div>
                                 <div class="log-paytype">
@@ -67,7 +67,7 @@ export default {
             success: res=>{
                 console.log(res)
                 if(res.status === 200 && res.data.status === 1){
-                    this.paylist = res.data.data.orderlist
+                    this.paylist = res.data.data.recordlist
                     this.payCount = format(res.data.data.paycount)
                     this.qiankuan = format(res.data.data.qiankuan)
                 }
