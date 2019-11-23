@@ -17,7 +17,7 @@
             </div>
             <div class="myorder">
                 <div class="title">我的订单</div>
-                <ul class="list">
+                <ul class="list" v-infinite-scroll="loadMore" :infinite-scroll-disabled="loading" infinite-scroll-distance="10">
                     <li class="item" v-for="(item, i) in orderList" :key="i" @click="toOrderDetail(item.OrderID)">
                         <div class="no-status">
                             <div class="no">订单号<span>{{item.OrderID}}</span></div>
@@ -39,6 +39,7 @@
                         </div>
                     </li>
                 </ul>
+                <div class="loading">{{loadText}}</div>
             </div>
         </div>
     </div>
@@ -54,7 +55,11 @@ export default {
             pageTitle: '订单',
             payCount: 0,
             qiankuan: 0,
-            orderList: []
+            orderList: [],
+            page: 0,
+            pagenum: 10,
+            loading: false,
+            loadText: ''
         }
     },
     components: {
@@ -78,35 +83,75 @@ export default {
                 }
             }
             return _v
+        },
+        loadMore () {            
+            if (!this.loading) {
+                this.page += 1
+                this.loadText = '加载中...'
+                this.loading = true
+                this.utils.http({
+                    name: this,
+                    uri: '/order/getorderlist',
+                    params: {
+                        params: { 
+                            cid: this.account.id,
+                            page: 1, 
+                            pagenum: 5, 
+                            sdate: '', 
+                            edate: '', 
+                            filtername: '', 
+                            tno: '',
+                            subcid: ''
+                        }
+                    },
+                    success: res=>{
+                        this.loading = false
+                        this.loadText = ''
+                        if(res.status === 200 && res.data.status === 1){
+                            let _d = res.data.data.orderlist
+                            if (_d.length > 0) {
+                                for (let i in _d) {
+                                    this.orderList.push(_d[i])
+                                }
+                            } else {
+                                this.loading = true
+                                if (this.orderList.length < 1) {
+                                    this.loadText = ''
+                                } else {
+                                    this.loadText = '——全部加载完成——'
+                                }
+                            }
+                        }
+                    },fail: res=> {
+                        this.loadText = ''
+                        this.loading = false
+                    }
+                })
+            }
+        },
+        getAccountInfo () {
+            this.utils.http({
+                name: this,
+                uri: '/company/getCompanyAccount',
+                params: {
+                    params: { 
+                        id: this.account.id
+                    }
+                },
+                success: res=>{
+                    console.log(res)
+                    if(res.status === 200 && res.data.status === 1){
+                        this.payCount = res.data.data[0].paycount
+                        this.qiankuan = res.data.data[0].debt
+                    }
+                }
+            })
         }
     },
     created () {
-        let acount = JSON.parse(sessionStorage.getItem('account'))
-        console.log(acount)
-        this.utils.http({
-            name: this,
-            uri: '/order/getorderlist',
-            params: {
-                params: { 
-                    cid: acount.id,
-                    page: 1, 
-                    pagenum: 5, 
-                    sdate: '', 
-                    edate: '', 
-                    filtername: '', 
-                    tno: '',
-                    subcid: ''
-                }
-            },
-            success: res=>{
-                console.log(res)
-                if(res.status === 200 && res.data.status === 1){
-                    this.orderList = res.data.data.orderlist
-                    this.payCount = format(res.data.data.paycount)
-                    this.qiankuan = format(res.data.data.qiankuan)
-                }
-            }
-        })
+        this.account = JSON.parse(sessionStorage.getItem('account'))
+        this.loadMore()
+        this.getAccountInfo()
     }
 }
 
@@ -247,6 +292,11 @@ function format (num) {
                         }
                     }
                 }
+            }
+            .loading{
+                text-align: center;
+                font-size: .28rem;
+                color: #777;
             }
         }
     }

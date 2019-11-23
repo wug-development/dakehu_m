@@ -9,7 +9,7 @@
         </div>
         <div class="contact-body">
             <div class="title">常用乘机人</div>
-            <ul class="list">
+            <ul class="list" v-infinite-scroll="loadMore" :infinite-scroll-disabled="loading" infinite-scroll-distance="10">
                 <li class="item" v-for="(item, i) in personList">
                     <div class="item-title">
                         <span>姓名</span>
@@ -17,7 +17,7 @@
                         <span class="company">{{item.uname}}</span>
                     </div>
                     <div class="item-body">
-                        <div><span>乘机人手机</span>{{item.dcPhone}}</div>
+                        <div><span>手机号</span>{{item.dcPhone}}</div>
                         <div><span>紧急人手机</span>{{item.dcUrgentPhone}}</div>
                         <div><span>护照号</span>{{item.dcPassportNo}}</div>
                         <div><span>护照到期日</span>{{item.dcPassportDate}}</div>
@@ -25,6 +25,7 @@
                     </div>
                 </li>
             </ul>
+            <div class="loading">{{loadText}}</div>
         </div>
     </div>
 </template>
@@ -36,7 +37,12 @@ export default {
         return {
             personList: [],
             pList: [],
-            searchKey: ''
+            searchKey: '',
+            account: {},
+            page: 0,
+            pagenum: 5,
+            loading: false,
+            loadText: ''
         }
     },
     methods: {
@@ -44,39 +50,57 @@ export default {
             this.$router.go(-1)
         },
         searchList () {
+            this.page = 0
+            this.loading = false
             this.personList = []
-            if (this.searchKey) {
-                for (let i in this.pList) {
-                    if (this.pList[i]['dcPerName'].indexOf(this.searchKey) > -1 || this.pList[i]['uname'].indexOf(this.searchKey) > -1) {
-                        this.personList.push(this.pList[i])
+            this.loadMore()
+        },
+        loadMore () {
+            if (!this.loading) {
+                this.page += 1
+                this.loadText = '加载中...'
+                this.loading = true
+                this.utils.http({
+                    name: this,
+                    uri: '/people/getpersonlist',
+                    params: {
+                        params: { 
+                            cid: this.account.id,
+                            page: this.page,
+                            pagenum: this.pagenum,
+                            filtername: this.searchKey || ''
+                        }
+                    },
+                    success: res=>{
+                        console.log(res)
+                        this.loading = false
+                        this.loadText = ''
+                        if(res.status === 200 && res.data.status === 1){
+                            let _d = res.data.data
+                            if (_d.length > 0) {
+                                for (let i in _d) {
+                                    this.personList.push(_d[i])
+                                }
+                            } else {
+                                this.loading = true
+                                if (this.personList.length < 1) {
+                                    this.loadText = ''
+                                } else {
+                                    this.loadText = '——全部加载完成——'
+                                }
+                            }
+                        }
+                    },fail: res=> {
+                        this.loading = false
+                        this.loadText = ''
                     }
-                }
-            } else {
-                this.personList = this.pList
+                })
             }
         }
     },
     created () {
-        let acount = JSON.parse(sessionStorage.getItem('account'))
-        this.utils.http({
-            name: this,
-            uri: '/people/getpersonlist',
-            params: {
-                params: { 
-                    cid: acount.id,
-                    page: 1,
-                    pagenum: 5,
-                    filtername: ''
-                }
-            },
-            success: res=>{
-                console.log(res)
-                if(res.status === 200 && res.data.status === 1){
-                    this.personList = res.data.data
-                    this.pList = res.data.data
-                }
-            }
-        })
+        this.account = JSON.parse(sessionStorage.getItem('account'))
+        this.loadMore()
     }
 }
 </script>
@@ -86,11 +110,18 @@ export default {
 .contact-box{
     height: 100%;
     background-color: #f4f4f4;
+    overflow: hidden auto;
     .header{
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: 2;;
         height: .9rem;
         background-color: #fff;
         padding: .1rem;
         box-sizing: border-box;
+        border-bottom: .02rem solid #eee;
         .icon{
             position: absolute;
             left: 0;
@@ -127,6 +158,7 @@ export default {
         }
     }
     .contact-body{
+        min-height: 100%;
         padding: .2rem;
         box-sizing: border-box;
         .title{
@@ -175,6 +207,11 @@ export default {
                     }
                 }
             }
+        }
+        .loading{
+            text-align: center;
+            font-size: .28rem;
+            color: #777;
         }
     }
 }

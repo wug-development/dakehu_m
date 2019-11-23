@@ -54,7 +54,7 @@ export default {
         let that = this
         document.onkeypress = function(e) {
             var keycode = document.all ? event.keyCode : e.which
-            if (keycode == 13) {
+            if (keycode == 13 && window.location.hash.replace('#','') === '/login') {
                 that.login()
             }
         }

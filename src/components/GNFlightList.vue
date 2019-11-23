@@ -97,6 +97,7 @@ export default {
     methods: {
         getFlightList (scode, ecode, sdate) {
             this.isLoading = true
+            this.Indicator.open()
             // 获取航班
             this.$http.get(this.uris + '/flight/getgnflights', {params: {
                 scity: scode,
@@ -104,6 +105,8 @@ export default {
                 sdate: sdate
             }})
             .then(res => {
+                this.Indicator.close()
+                this.isLoading = false
                 if (res && res.data && res.data.status != 0) {
                     var _d = res.data.data
                     console.log(_d)
@@ -113,9 +116,9 @@ export default {
                         this.flightList = _d.data.flightItems[0].flights
                     }
                 }
-                this.isLoading = false
             })
             .catch(res => {
+                this.Indicator.close()
                 this.isLoading = false
             })
         },
@@ -201,7 +204,6 @@ export default {
         }else{
             this.flightType = '单程'
         }
-        this.isLoading = true
         
         this.userID = this.utils.getItem("kxUserID") || '';
         if(this.userID && this.userID != "null"){

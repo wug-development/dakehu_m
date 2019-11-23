@@ -32,12 +32,11 @@ export default {
         height: 100%;
         background-color: #f4f4f4;
         box-sizing: border-box;
-        overflow: hidden;
+        overflow: hidden auto;
         .aboutus-body{
-            height: 100%;
+            min-height: 100%;
             padding: 1.2rem 0;
             box-sizing: border-box;
-            overflow: hidden auto;
             .logo{
                 text-align: center;
                 img{

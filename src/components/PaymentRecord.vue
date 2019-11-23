@@ -14,25 +14,26 @@
             </div>
             <div class="recode-body">
                 <div class="title">付款记录</div>
-                <ul class="recode-list">
+                <ul class="recode-list" v-infinite-scroll="loadMore" :infinite-scroll-disabled="loading" infinite-scroll-distance="10">
                     <li class="item" v-for="(item, i) in paylist" :key="i">
                         <div class="log">
                             <div class="log-acount">
                                 <div class="log-money">
-                                    <div class="money">&yen;{{item.dnMoney}}</div>
+                                    <div class="money">&yen;{{item.money}}</div>
                                     <div class="explain">汇款金额</div>
                                 </div>
                                 <div class="log-paytype">
-                                    <div class="paytype">付款方式：<span>{{item.dcPayType}}</span></div>
-                                    <div class="paydate">日期：<span>{{item.dtAddDatetime}}</span></div>
-                                    <div class="paycompany">单位：{{uname}}</div>
+                                    <div class="paytype">付款方式：<span>{{item.method}}</span></div>
+                                    <div class="paydate">日期：<span>{{item.datetime}}</span></div>
+                                    <div class="paycompany">单位：{{item.company}}</div>
                                 </div>
                             </div>
-                            <div class="remarks">备注：{{item.dcRemarks}}</div>
+                            <div class="remarks">备注：{{item.other}}</div>
                         </div>
-                        <div class="status" v-html="item.dnStatus == 1? '已<br>确<br>认': '等<br>待<br>确<br>认'"></div>
+                        <div class="status" v-html="item.status == 1? '已<br>确<br>认': '等<br>待<br>确<br>认'"></div>
                     </li>
                 </ul>
+                <div class="loading">{{loadText}}</div>
             </div>
         </div>
     </div>
@@ -46,33 +47,83 @@ export default {
     data () {
         return {
             pageTitle: '付款记录',
-            uname: '',
+            account: {},
             payCount: 0,
             qiankuan: 0,
-            paylist: []
+            paylist: [],
+            page: 0,
+            pagenum: 10,
+            loading: false,
+            loadText: ''
+        }
+    },
+    methods: {
+        loadMore () {
+            if (!this.loading) {
+                this.page += 1
+                this.loadText = '加载中...'
+                this.loading = true
+                this.utils.http({
+                    name: this,
+                    uri: '/payrecord/getPayList',
+                    params: {
+                        params: { 
+                            cid: this.account.id,
+                            page: this.page,
+                            pagenum: this.pagenum
+                        }
+                    },
+                    success: res=>{
+                        this.loading = false
+                        this.loadText = ''
+                        if(res.status === 200 && res.data.status === 1){
+                            let _d = res.data.data
+                            if (_d.length > 0) {
+                                for (let i in _d) {
+                                    this.paylist.push(_d[i])
+                                }
+                            } else {
+                                this.loading = true
+                                if (this.paylist.length < 1) {
+                                    this.loadText = ''
+                                } else {
+                                    this.loadText = '——全部加载完成——'
+                                }
+                            }
+                        }
+                    },fail: res=> {
+                        this.loadText = ''
+                        this.loading = false
+                    }
+                })
+            }
+        },
+        getAccountInfo () {
+            this.utils.http({
+                name: this,
+                uri: '/company/getCompanyAccount',
+                params: {
+                    params: { 
+                        id: this.account.id
+                    }
+                },
+                success: res=>{
+                    console.log(res)
+                    if(res.status === 200 && res.data.status === 1){
+                        this.payCount = res.data.data[0].paycount
+                        this.qiankuan = res.data.data[0].debt
+                    }
+                }
+            })
         }
     },
     components: {
         Header
     },
-    created () {        
-        let acount = JSON.parse(sessionStorage.getItem('account'))
-        this.uname = acount.uname
-        this.utils.http({
-            name: this,
-            uri: '/payrecord/getrecordlist',
-            params: {
-                params: { cid: acount.id}
-            },
-            success: res=>{
-                console.log(res)
-                if(res.status === 200 && res.data.status === 1){
-                    this.paylist = res.data.data.recordlist
-                    this.payCount = format(res.data.data.paycount)
-                    this.qiankuan = format(res.data.data.qiankuan)
-                }
-            }
-        })
+    created () {    
+        this.account = JSON.parse(sessionStorage.getItem('account'))
+        this.loadMore()
+        this.getAccountInfo()
     }
 }
 
@@ -186,6 +237,11 @@ function format (num) {
                         line-height: .3rem;
                     }
                 }
+            }
+            .loading{
+                text-align: center;
+                font-size: .28rem;
+                color: #777;
             }
         }
     }

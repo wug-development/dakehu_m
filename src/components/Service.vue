@@ -58,10 +58,12 @@ export default {
 <style lang="scss">
     .service-box{
         height: 100%;
+        overflow: hidden auto;
         background: linear-gradient(#28ad7f 1rem, #EFEFEF 5rem);
         .service-body{
-            height: 100%;
+            min-height: 100%;
             padding: .7rem .3rem 1.2rem .3rem;
+            box-sizing: border-box;
             .imgservice{
                 padding: 0 .6rem;
                 img{

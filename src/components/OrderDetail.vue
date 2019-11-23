@@ -1,33 +1,32 @@
 <template>
-    <div id="OrderDetail" class="pubbody orderdetail-box">
+    <div id="OrderDetail" class="pubbody orderdetail-box" v-if="orderInfo">
         <Header :name="pageTitle"></Header>
         <div class="detail-head">
             <div class="order-status"><div>{{orderInfo.dnStatus == 0? '等待处理' : '预定成功'}}</div><span>预订时间：{{orderInfo.dtAddTime}}</span></div>
-            <div class="service"><div>{{orderInfo.dcAdminName}}</div><span>（您的客服专员）</span> </div>
+            <div class="service" v-if="orderInfo.dnStatus == 1"><div>{{orderInfo.dcAdminName}}</div><span>（您的客服专员）</span> </div>
             <div class="notice">
                 请仔细核对您的订单详情<span>(取消此订单请联系管理员！)</span>
             </div>
         </div>
         <div class="detail-body">
             <div class="title">订单信息</div>
-            <ul class="info" v-if="orderInfo.dcStartCity">
+            <ul class="info" v-if="orderInfo.dnOrderType == 1">
                 <li><span>联系人</span>{{orderInfo.dcLinkName}}</li>
                 <li><span>行程</span>{{orderInfo.dcStartCity}}-{{orderInfo.dcBackCity}}</li>
                 <li><span>出发日期</span>{{orderInfo.dcStartDate}}</li>
                 <li><span>记录编号</span>{{orderInfo.dcOrderCode}}</li>
                 <li><span>票号</span>{{orderInfo.dcOrderCode}}</li>
-                <li><span>订单金额</span>{{orderInfo.dnTotalPrice}} ( {{orderInfo.dnPrice}}  + 税金 {{orderInfo.dnTax}} )*{{orderInfo.person.length}}人</li>
+                <li><span>订单金额</span>{{orderInfo.dnTotalPrice}} ( {{orderInfo.dnPrice}}  + 税金 {{orderInfo.dnTax}} + 服务费 {{orderInfo.dnServicePrice}} )*{{orderInfo.person.length}}人</li>
             </ul>
-            <ul class="info" v-if="orderInfo.dcOrderCode">
+            <ul class="info" v-else>
                 <li><span>记录编号</span>{{orderInfo.dcOrderCode}}</li>
                 <li><span>CTCM</span>{{orderInfo.dcCTCM}}</li>
                 <li><span>CTCT</span>{{orderInfo.dcCTCT}}</li>
                 <li><span>票号</span>{{orderInfo.dcOrderCode}}</li>
-                <li><span>折扣</span>{{orderInfo.dnDiscount}}</li>
-                <li><span>订单金额</span>{{orderInfo.dnTotalPrice}} ( {{orderInfo.dnPrice}}  + 税金 {{orderInfo.dnTax}} )*{{orderInfo.person.length}}人</li>
-                <li><span>备注</span>{{orderInfo.dcContent}}</li>
+                <li><span>折扣</span>{{checkDiscount(orderInfo.dnDiscount)}}</li>
+                <li><span>订单金额</span>{{orderInfo.dnTotalPrice}} ( {{orderInfo.dnPrice}}  + 税金 {{orderInfo.dnTax}} + 服务费 {{orderInfo.dnServicePrice}} )*{{orderInfo.person.length}}人</li>
             </ul>
-            <div class="remark" v-if="orderInfo.dnAirType == 2">
+            <div class="remark" v-if="orderInfo.dnStatus == 1">
                 {{orderInfo.dcContent}}
             </div>
             <div class="remark" v-else>
@@ -90,8 +89,8 @@
             <ul class="man-list">
                 <li class="man-item" v-for='(p, index) in orderInfo.person'>
                     <div><span>乘机人<label>{{index + 1}}</label></span>{{p.pername}}（{{p.type == 1? '成人' : '儿童'}}）</div>
-                    <div><span>性别</span>{{p.sex}}</div>
-                    <div><span>护照号码</span>{{p.pno}}</div>
+                    <div><span>手机</span>{{p.phone}}</div>
+                    <div><span>证件号码</span>{{p.idcard}}</div>
                 </li>
             </ul>
             </template>
@@ -108,7 +107,7 @@ export default {
         return {
             pageTitle: '订单号',
             orderID: '',
-            orderInfo: {},
+            orderInfo: '',
             goFlightList: [],
             toFlightList: []
         }
@@ -122,6 +121,13 @@ export default {
                 return v.replace('T', ' ').replace('Z','')
             } else {
                 return ''
+            }
+        },
+        checkDiscount (v) {
+            if (v == '1') {
+                return '全价'
+            } else if (v) {
+                return (v * 10).toFixed(1) + '折'
             }
         }
     },

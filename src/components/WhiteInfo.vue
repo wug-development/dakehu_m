@@ -75,14 +75,15 @@ export default {
                 id: '',
                 type: '成人',
                 name: '',
-                cardtype: '身份证',
+                cardtype: '1',
                 idcard: '',
                 phone: '',
                 jjphone: '',
                 safenum: 0
             },
             selPersonList: [],
-            account: {}
+            account: {},
+            isLoading: false
         }
     },
     components: {
@@ -165,10 +166,32 @@ export default {
                 this.addItem()
             }
         },
+        verifyPerson () {
+            let isCheck = true
+            for (let i in this.selPersonList) {
+                if (this.selPersonList[i].name.trim() == '') {
+                    isCheck = false;
+                    this.MessageBox('请输入第 ' + (Number(i) + 1) + ' 位乘机人的姓名')
+                    break;
+                } else if (this.selPersonList[i].idcard.trim() == '') {
+                    isCheck = false;
+                    this.MessageBox('请输入第 ' + (Number(i) + 1) + ' 位乘机人的证件号码')
+                    break;
+                } else if (this.selPersonList[i].phone.trim() == '') {
+                    isCheck = false;
+                    this.MessageBox('请输入第 ' + (Number(i) + 1) + ' 位乘机人的联系电话')
+                    break;
+                } else if (this.selPersonList[i].jjphone.trim() !== '' && this.selPersonList[i].jjphone.trim() === this.selPersonList[i].phone.trim()) {
+                    isCheck = false;
+                    this.MessageBox('请输入第 ' + (Number(i) + 1) + ' 位乘机人的联系电话和紧急人联系电话不能一致！')
+                    break;
+                }
+            }
+            return isCheck
+        },
         submitOrder () {
-            if (this.selPersonList[0].phone.trim() === '') {
-                this.MessageBox('请输入乘机人手机号')
-            } else {
+            if (!this.isLoading && this.verifyPerson()) {
+                this.loading = true
                 let orderBody = {
                     cid: this.account.id,
                     scity: this.search.scity,
@@ -179,9 +202,9 @@ export default {
                     airbody: this.flight,
                     airseat: this.seat
                 }
-                console.log(orderBody)
                 this.$http.post(this.uris + '/gnorder/submitordercn', orderBody)
                 .then(res => {
+                    this.loading = false
                     if (res && res.data && res.data.status != 0) {
                         this.MessageBox("下单成功！", '温馨提示').then(()=>{
                             this.$router.push({
@@ -194,11 +217,13 @@ export default {
                     } else {
                         this.MessageBox("下单失败，请检查数据！", '温馨提示')
                     }
-                });
+                }).catch(res => {
+                    this.loading = false
+                })
             }
         }
     },
-    created () {        
+    created () {
         let scode = this.utils.getItem("scode")
         let ecode = this.utils.getItem("ecode")
         let stime = this.utils.getItem("stime")

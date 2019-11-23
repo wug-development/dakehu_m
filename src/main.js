@@ -18,6 +18,8 @@ import messagebox from 'mint-ui/lib/message-box'
 import 'mint-ui/lib/message-box/style.css'
 import datetimePicker from 'mint-ui/lib/datetime-picker'
 import 'mint-ui/lib/datetime-picker/style.css'
+import InfiniteScroll from 'mint-ui/lib/infinite-scroll'
+import 'mint-ui/lib/infinite-scroll/style.css'
 
 import common from '../common/common'
 
@@ -29,6 +31,8 @@ Vue.prototype.urio = process.env.APIO_URL
 Vue.prototype.utils = common.utils
 Vue.prototype.MessageBox = messagebox
 Vue.prototype.Indicator = indicator
+
+Vue.use(InfiniteScroll)
 
 Vue.component(radio.name, radio)
 Vue.component(swipe.name, swipe)
