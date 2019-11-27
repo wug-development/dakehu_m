@@ -18,6 +18,8 @@ import messagebox from 'mint-ui/lib/message-box'
 import 'mint-ui/lib/message-box/style.css'
 import datetimePicker from 'mint-ui/lib/datetime-picker'
 import 'mint-ui/lib/datetime-picker/style.css'
+import Picker from 'mint-ui/lib/picker'
+import 'mint-ui/lib/picker/style.css'
 import InfiniteScroll from 'mint-ui/lib/infinite-scroll'
 import 'mint-ui/lib/infinite-scroll/style.css'
 
@@ -38,6 +40,7 @@ Vue.component(radio.name, radio)
 Vue.component(swipe.name, swipe)
 Vue.component(swipeItem.name, swipeItem)
 Vue.component(datetimePicker.name, datetimePicker)
+Vue.component(Picker.name, Picker)
 
 /* eslint-disable no-new */
 new Vue({

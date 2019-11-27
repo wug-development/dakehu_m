@@ -23,9 +23,11 @@
                                         <label>税金￥{{flightType == '往返'?item.jipiao.WFS:item.jipiao.DCS}}</label>
                                     </div>
                                     <div class="btnprice">
-                                        <span>￥<label>{{item.piaojia.TicketPrice}}</label></span>
                                         <template v-if="i != 0">
                                         <a @click="selFlight(item.AirID, index, item.STime, item.AirCode, item.index)">{{btnname}}</a>
+                                        </template>
+                                        <template v-else>
+                                        <span>￥<label>{{item.piaojia.TicketPrice}}</label></span>
                                         </template>
                                     </div>
                                 </div>
@@ -631,7 +633,7 @@ function getUserInfo(vue, uid){
             padding-bottom: 1.6rem;
             box-sizing: border-box;
             .flist-list{
-                padding: 0 .2rem 0 .2rem;
+                padding: 0 .2rem .9rem .2rem;
                 box-sizing: border-box;
                 width: 100%;
                 min-height: 9rem;

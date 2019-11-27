@@ -134,6 +134,7 @@ export default {
             this.dataList = this.list
         },
         checkUser (val) {
+            console.log(val)
             this.showPerson = false
             if(val.length<1){
                 return false

@@ -1,5 +1,5 @@
 <template>
-    <div id="FlightList" class="flightlist-box">
+    <div id="FlightList" class="gnflightlist-box">
         <Header class="flight-header" :name="pageTitle"></Header>
         <div class="flist-tlist">
             <div class="flist-head">
@@ -217,7 +217,7 @@ export default {
 </script>
 
 <style lang="scss">
-.flightlist-box{
+.gnflightlist-box{
     min-height: 100%;
     height: 100%;
     background: linear-gradient(#4fc199 1rem, #EFEFEF 5rem);
@@ -321,7 +321,7 @@ export default {
                                 border-left: .01rem solid #999;
                                 height: .28rem;
                                 line-height: .28rem;
-                                padding-left: .1rem;
+                                padding-left: .2rem;
                             }
                             .tgq{
                                 color: #29ad80;
@@ -373,7 +373,7 @@ export default {
                             color: #999;
                             text-align: center;
                             overflow: hidden;
-                            min-width: 1.3rem;
+                            min-width: 1.8rem;
                             .time{
                                 font-size: .44rem;
                                 color: #333;
@@ -393,7 +393,7 @@ export default {
                             font-size: .26rem;
                             color: #999;
                             text-align: center;
-                            min-width: 1.3rem;
+                            min-width: 1.8rem;
                             overflow: hidden;
                             .time{
                                 font-size: .44rem;

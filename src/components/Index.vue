@@ -350,6 +350,24 @@ export default {
                     this.accountInfo.debt = _info.debt
                 }
             })
+        },
+        getVersion () {            
+            this.$http.get('http://m.dakehu.airkx.cn/static/version.json', { params: {}})
+            .then((res) => {
+                let _v = res.data
+                if (typeof(_v) === 'string') {
+                    _v = JSON.parse(_v)
+                }
+                
+                let _lv = sessionStorage.getItem('version')
+                if (_lv) {
+                    if (_v.v != Number(_lv)) {
+                        window.location.href = 'http://m.dakehu.airkx.cn/?v=' + _v.v + '/#/index'
+                    }
+                } else {
+                    sessionStorage.setItem('version', _v.v)
+                }
+            })
         }
     },
     components: {
@@ -359,6 +377,8 @@ export default {
         DatePicker
     },
     created() {
+        this.getVersion()
+
         const _account = sessionStorage.getItem('account')
         if (!_account) {
             this.MessageBox.alert('请登录').then(() => {
