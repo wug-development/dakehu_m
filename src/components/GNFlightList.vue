@@ -17,7 +17,7 @@
                             <div class="itembox-padding">
                                 <div class="lab">
                                     <div class="labs">
-                                        <img :src="'/static/icons/' + (item.flightNo.substr(0,2)) + '.gif'" alt="">
+                                        <img :src="'/icons/' + (item.flightNo.substr(0,2)) + '.gif'" alt="">
                                         <span>{{item.flightNo}}</span>
                                         <label>{{item.planeType}}（{{item.seatItems[0].seatMsg.replace("特价舱","特价经济舱")}}）</label>
                                         <label class="tgq" @click="checkTGQ(item.flightNo.substr(0,2), item.seatItems[0].seatCode, index, 0)">退改签</label>
