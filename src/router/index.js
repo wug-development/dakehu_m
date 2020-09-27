@@ -1,23 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
-import Index from '@/components/Index'
-import Aboutus from '@/components/Aboutus'
-import Service from '@/components/Service'
-import Suggest from '@/components/Suggest'
-import FlightList from '@/components/FlightList'
-import ReturnFlight from '@/components/ReturnFlight'
-import GNFlightList from '@/components/GNFlightList'
-import GNSelFlight from '@/components/GNSelFlight'
-import FlightInfo from '@/components/FlightInfo'
-import AddPerson from '@/components/AddPerson'
-import WhiteInfo from '@/components/WhiteInfo'
-import PersonList from '@/components/PersonList'
-import TopContact from '@/components/TopContact'
-import PaymentRecord from '@/components/PaymentRecord'
-import SearchOrder from '@/components/SearchOrder'
-import OrderList from '@/components/OrderList'
-import OrderDetail from '@/components/OrderDetail'
 
 Vue.use(Router)
 
@@ -26,52 +8,72 @@ export default new Router({
         {
             path: '/',
             name: 'Login',
-            component: Login
+            component (resolve) {
+                require(['@/components/Login'], resolve)
+            }
         },
         {
             path: '/index',
             name: 'Index',
-            component: Index
+            component (resolve) {
+                require(['@/components/Index'], resolve)
+            }
         },
         {
             path: '/aboutus',
             name: 'Aboutus',
-            component: Aboutus
+            component (resolve) {
+                require(['@/components/Aboutus'], resolve)
+            }
         },
         {
             path: '/service',
             name: 'Service',
-            component: Service
+            component (resolve) {
+                require(['@/components/Service'], resolve)
+            }
         },
         {
             path: '/suggest',
             name: 'Suggest',
-            component: Suggest
+            component (resolve) {
+                require(['@/components/Suggest'], resolve)
+            }
         },
         {
             path: '/flightlist',
             name: 'FlightList',
-            component: FlightList
+            component (resolve) {
+                require(['@/components/FlightList'], resolve)
+            }
         },
         {
             path: '/returnflight',
             name: 'ReturnFlight',
-            component: ReturnFlight
+            component (resolve) {
+                require(['@/components/ReturnFlight'], resolve)
+            }
         },
         {
             path: '/gnflightlist',
             name: 'GNFlightList',
-            component: GNFlightList
+            component (resolve) {
+                require(['@/components/GNFlightList'], resolve)
+            }
         },
         {
             path: '/selflight',
             name: 'GNSelFlight',
-            component: GNSelFlight
+            component (resolve) {
+                require(['@/components/GNSelFlight'], resolve)
+            }
         },
         {
             path: '/flightinfo',
             name: 'FlightInfo',
-            component: FlightInfo
+            component (resolve) {
+                require(['@/components/FlightInfo'], resolve)
+            }
         },
         {
             path: '/whiteinfo',
@@ -80,42 +82,58 @@ export default new Router({
                 keepAlive: true,// 此组件需要被缓存                
                 isBack: false// 用于判断上一个页面是哪个
             },
-            component: WhiteInfo
+            component (resolve) {
+                require(['@/components/WhiteInfo'], resolve)
+            }
         },
         {
             path: '/personlist',
             name: 'PersonList',
-            component: PersonList
+            component (resolve) {
+                require(['@/components/PersonList'], resolve)
+            }
         },
         {
             path: '/addperson',
             name: 'AddPerson',
-            component: AddPerson
+            component (resolve) {
+                require(['@/components/AddPerson'], resolve)
+            }
         },
         {
             path: '/paymentrecord',
             name: 'PaymentRecord',
-            component: PaymentRecord
+            component (resolve) {
+                require(['@/components/PaymentRecord'], resolve)
+            }
         },
         {
             path: '/searchorder',
             name: 'SearchOrder',
-            component: SearchOrder
+            component (resolve) {
+                require(['@/components/SearchOrder'], resolve)
+            }
         },
         {
             path: '/orderlist',
             name: 'OrderList',
-            component: OrderList
+            component (resolve) {
+                require(['@/components/OrderList'], resolve)
+            }
         },
         {
             path: '/orderdetail',
             name: 'OrderDetail',
-            component: OrderDetail
+            component (resolve) {
+                require(['@/components/OrderDetail'], resolve)
+            }
         },
         {
             path: '/contacts',
             name: 'TopContact',
-            component: TopContact
+            component (resolve) {
+                require(['@/components/TopContact'], resolve)
+            }
         }
     ]
 })
