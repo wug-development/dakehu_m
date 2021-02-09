@@ -17,7 +17,7 @@
                             <div class="itembox-padding" v-if="i == 0 || index==othernum">
                                 <div class="lab">
                                     <div class="labs">
-                                        <img :src="item.airinfo.Picture" alt="">
+                                        <img :src="iconPath + item.airinfo.Picture" alt="">
                                         <span>{{item.AirCode}}</span>
                                         <label @click="showTgqLayer(item.piaojia.beizhu)">退改签规定</label>
                                         <label>税金￥{{flightType == '往返'?item.jipiao.WFS:item.jipiao.DCS}}</label>

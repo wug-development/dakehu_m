@@ -33,6 +33,7 @@ Vue.prototype.urio = process.env.APIO_URL
 Vue.prototype.utils = common.utils
 Vue.prototype.MessageBox = messagebox
 Vue.prototype.Indicator = indicator
+Vue.prototype.iconPath = 'http://vip.airkx.cn'
 
 Vue.use(InfiniteScroll)
 

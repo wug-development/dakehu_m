@@ -6,7 +6,7 @@
                 <div class="item-box">
                     <div class="lab">
                         <div class="labs">
-                            <img :src="'/icons/' + (flight.flightNo.substr(0,2)) + '.gif'" alt="">
+                            <img :src="iconPath + '/icons/' + (flight.flightNo.substr(0,2)) + '.gif'" alt="">
                             <span>{{flight.flightNo}}</span>
                             <label>{{flight.planeType}}（{{flight.seatItems[0].seatMsg.replace("特价舱","特价经济舱")}}）</label>
                             <label>{{startDate}}</label>

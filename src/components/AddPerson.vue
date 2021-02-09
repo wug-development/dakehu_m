@@ -16,7 +16,7 @@
                     </li>
                     <li class="text-item">
                         <span class="text-item-key middle">护照号码：</span>
-                        <input type="text" @blur="checkPassport" v-model="item.HZH" placeholder="请填写护照号码" maxlength="30">
+                        <input type="text" @blur="checkPassport" v-model="item.HZH" placeholder="请填写护照号码" maxlength="15">
                     </li>
                     <li class="text-item">
                         <span class="text-item-key lager">护照有效期：</span>
@@ -42,7 +42,7 @@
                         </li>
                         <li class="text-item">
                             <span class="text-item-key middle">护照号码：</span>
-                            <input type="text" placeholder="请填写护照号码" maxlength="30" @blur="checkPassport" v-model="item.HZH">
+                            <input type="text" placeholder="请填写护照号码" maxlength="15" @blur="checkPassport" v-model="item.HZH">
                         </li>
                         <li class="text-item">
                             <span class="text-item-key lager">护照有效期：</span>
@@ -71,8 +71,8 @@
 
 <script>
 import Header from './public/HeaderBack.vue'
-import PickerList from './Public/PickerList.vue'
-import DateTime from './Public/DateTime.vue'
+import PickerList from './public/PickerList.vue'
+import DateTime from './public/DateTime.vue'
 
 import { setInterval, setTimeout } from 'timers';
 export default {

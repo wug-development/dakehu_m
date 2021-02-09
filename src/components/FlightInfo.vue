@@ -23,7 +23,7 @@
                                 <div class="fline">
                                     <div>{{startFlight.SPortName}}</div>
                                     <div class="air">
-                                        <img :src="startFlight.airinfo.Picture" alt="">
+                                        <img :src="iconPath + startFlight.airinfo.Picture" alt="">
                                         {{startFlight.AirCode}}&nbsp;{{startFlight.airinfo.CompanyName}}&nbsp;&nbsp;{{startFlight.airtype.AirName || startFlight.Jixing }}
                                     </div>
                                     <div>{{startFlight.EPortName}}</div>
@@ -42,7 +42,7 @@
                                         <div class="fline">
                                             <div>{{item.SPortName}}</div>
                                             <div class="air">
-                                                <img :src="startFlight.airinfo.Picture" alt="">
+                                                <img :src="iconPath + startFlight.airinfo.Picture" alt="">
                                                 {{item.AirCode}}&nbsp;{{startFlight.airinfo.CompanyName}}&nbsp;&nbsp;{{item.Jixing}}
                                             </div>
                                             <div>{{item.EPortName}}</div>
@@ -71,7 +71,7 @@
                                 <div class="fline">
                                     <div>{{backFlight.SPortName}}</div>
                                     <div class="air">
-                                        <img :src="backFlight.airinfo.Picture" alt="">
+                                        <img :src="iconPath + backFlight.airinfo.Picture" alt="">
                                         {{backFlight.AirCode}}&nbsp;{{backFlight.airinfo.CompanyName}}&nbsp;&nbsp;{{backFlight.airtype.AirName || backFlight.Jixing}}
                                     </div>
                                     <div>{{backFlight.EPortName}}</div>
@@ -90,7 +90,7 @@
                                     <div class="fline">
                                         <div>{{item.SPortName}}</div>
                                         <div class="air">
-                                            <img :src="backFlight.airinfo.Picture" alt="">
+                                            <img :src="iconPath + backFlight.airinfo.Picture" alt="">
                                             {{item.AirCode}}&nbsp;{{backFlight.airinfo.CompanyName}}&nbsp;&nbsp;{{item.Jixing}}
                                         </div>
                                         <div>{{item.EPortName}}</div>

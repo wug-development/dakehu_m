@@ -75,7 +75,7 @@
                             <div class="fline">
                             <div>{{item.dcSPortName}}</div>
                             <div class="air">
-                                <img :src="item.dcCompanyLogo" alt="">
+                                <img :src="iconPath + item.dcCompanyLogo" alt="">
                                 {{item.dcJixing}}
                             </div>
                             <div>{{item.dcEPortName}}</div>

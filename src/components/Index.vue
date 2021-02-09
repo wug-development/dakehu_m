@@ -352,7 +352,7 @@ export default {
             })
         },
         getVersion () {            
-            this.$http.get('http://m.dakehu.airkx.cn/static/version.json?v=' + Math.random(), { params: {}})
+            this.$http.get('http://m.airkx.cn/static/version.json?v=' + Math.random(), { params: {}})
             .then((res) => {
                 let _v = res.data
                 if (typeof(_v) === 'string') {
@@ -363,7 +363,7 @@ export default {
                 if (_lv) {
                     if (_v.v != Number(_lv)) {
                         sessionStorage.setItem('version', _v.v)
-                        window.location.href = 'http://m.dakehu.airkx.cn/?v=' + _v.v + '/#/index'
+                        window.location.href = 'http://m.airkx.cn/?v=' + _v.v + '/#/index'
                     }
                 } else {
                     sessionStorage.setItem('version', _v.v)
